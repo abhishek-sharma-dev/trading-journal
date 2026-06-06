@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Journal — Welcome</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F4F3EF;
+  --card: #FFFFFF;
+  --border: #E2E0DA;
+  --text: #1A1A18;
+  --muted: #9A9890;
+  --green: #1A8F68;
+  --green-light: #E3F5EE;
+  --green-dark: #0D5A42;
+  --green-glow: rgba(26,143,104,0.12);
+  --red: #C94B2B;
+  --red-light: #FAEDE8;
+  --sidebar-bg: #111110;
+  --sidebar-text: #C8C6C0;
+  --sidebar-muted: #6A6864;
+  --sidebar-active: #1A8F68;
+  --sidebar-hover: #1E1E1C;
+  --sidebar-border: #2A2A28;
+  --accent: #1A8F68;
+  --grid-color: rgba(0, 0, 0, 0.035);
+}
+
+[data-theme="dark"] {
+  --bg: #0F0F0E;
+  --card: #1A1A18;
+  --border: #2A2A28;
+  --text: #E8E6E1;
+  --muted: #8A8880;
+  --green: #2DB37D;
+  --green-light: #1A3D2E;
+  --green-dark: #1A8F68;
+  --green-glow: rgba(45,179,125,0.15);
+  --red: #E06B4B;
+  --red-light: #3D1E16;
+  --sidebar-bg: #0A0A09;
+  --sidebar-text: #B8B6B0;
+  --sidebar-muted: #5A5854;
+  --sidebar-active: #2DB37D;
+  --sidebar-hover: #151513;
+  --sidebar-border: #1E1E1C;
+  --accent: #2DB37D;
+  --grid-color: rgba(255, 255, 255, 0.02);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════
+   SPLIT LAYOUT
+   ═══════════════════════════════════ */
+.split-wrap {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.split-left {
+  flex: 1 1 50%;
+  min-width: 0;
+  /* background: #080C14; */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 3.5rem;
+  overflow: hidden;
+}
+
+.split-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.split-left::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Sweep scanning laser effect */
+.grid-scan-laser {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.3) 50%, rgba(16, 185, 129, 0.05) 90%, transparent);
+  pointer-events: none;
+  z-index: 1;
+  animation: gridScan 8s infinite linear;
+}
+@keyframes gridScan {
+  from { top: -10%; }
+  to { top: 110%; }
+}
+
+/* Glowing Background Ambient Orbs */
+.glow-orb-left {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-left-1 {
+  width: 320px;
+  height: 320px;
+  background: var(--green);
+  top: -50px;
+  left: -50px;
+  animation: orbDrift1 18s infinite ease-in-out;
+}
+.orb-left-2 {
+  width: 380px;
+  height: 380px;
+  background: #ff0000;
+  bottom: -80px;
+  right: -50px;
+  animation: orbDrift2 22s infinite ease-in-out;
+}
+@keyframes orbDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.08); }
+}
+@keyframes orbDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 40px) scale(1.05); }
+}
+
+/* Brand styling matching dashboard */
+.split-brand {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.split-brand-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1A8F68 0%, #0D5A42 50%, #0A4A35 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(26, 143, 104, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.split-brand-icon::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.split-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+.split-brand-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+.split-brand-sub {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+.split-center {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 480px;
+}
+
+.split-headline {
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.split-headline span {
+    background: #10B981;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+}
+
+.split-desc {
+  font-size: 15px;
+  color: var(--text);
+  opacity: 0.85;
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+  max-width: 420px;
+}
+
+/* Stats grid and cards for features */
+.split-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  max-width: 440px;
+  margin-bottom: 2.5rem;
+}
+.split-stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="dark"] .split-stat-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+.split-stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(800px circle at var(--x, 0px) var(--y, 0px), rgba(26, 143, 104, 0.06), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+[data-theme="dark"] .split-stat-card::before {
+  background: radial-gradient(800px circle at var(--x, 0px) var(--y, 0px), rgba(45, 179, 125, 0.1), transparent 40%);
+}
+.split-stat-card:hover::before {
+  opacity: 1;
+}
+.split-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--green);
+  box-shadow: 0 8px 24px var(--green-glow);
+}
+.split-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.split-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+.split-stat-value.green {
+  color: var(--green);
+}
+.split-stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+/* Active traders green pulsing dot */
+.active-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .active-pulse-dot {
+  background: #34D399;
+}
+.active-pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.5);
+  animation: activePulse 2s infinite ease-in-out;
+}
+[data-theme="dark"] .active-pulse-dot::after {
+  background: rgba(52, 211, 153, 0.5);
+}
+@keyframes activePulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(2.2); opacity: 0; }
+}
+
+.split-bottom {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.split-bottom-left {
+  font-size: 12px;
+  color: var(--muted);
+}
+.split-bottom-left strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.split-trust-badges {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.trust-badge {
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--card);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* ── RIGHT PANEL (Auth Panel) ── */
+.split-right {
+  flex: 1 1 50%;
+  min-width: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 3rem;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Glowing Ambient Orbs behind auth-box */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 1;
+}
+.orb-1 {
+  width: 250px;
+  height: 250px;
+  background: var(--green);
+  top: 10%;
+  left: 5%;
+}
+.orb-2 {
+  width: 300px;
+  height: 300px;
+  background: #C94B2B;
+  bottom: 15%;
+  right: 5%;
+}
+[data-theme="dark"] .glow-orb {
+  opacity: 0.18;
+}
+
+.auth-box {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 440px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.75rem;
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.04), 
+    0 1px 3px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="dark"] .auth-box {
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.5), 
+    0 1px 5px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.auth-box:hover {
+  /* transform: translateY(-2px); */
+  /* box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.03); */
+}
+
+/* Outside theme toggle - positioned on the right panel background */
+.theme-toggle-outside {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}
+.theme-toggle-outside .theme-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.theme-toggle-outside .theme-btn:hover {
+  background: var(--bg);
+  border-color: var(--muted);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.auth-header {
+  margin-bottom: 1.75rem;
+}
+.auth-header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.auth-header-sub {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+/* Capsule-style Tabs */
+.auth-tabs {
+  display: flex;
+  background: rgba(0,0,0,0.03);
+  border-radius: 12px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  margin-bottom: 1.75rem;
+}
+[data-theme="dark"] .auth-tabs {
+  background: rgba(255,255,255,0.02);
+}
+.auth-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  border-radius: 9px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+.auth-tab:hover {
+  color: var(--text);
+}
+.auth-tab.active {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Forms */
+.auth-form {
+  display: none;
+}
+.auth-form.active {
+  display: block;
+  animation: fadeIn 0.25s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium form group styling */
+.form-group-premium {
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+.form-label-premium {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.input-wrapper-premium {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  background: var(--card);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.input-wrapper-premium:focus-within {
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px var(--green-glow);
+}
+.input-icon-premium {
+  padding-left: 14px;
+  color: var(--muted);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+.input-wrapper-premium:focus-within .input-icon-premium {
+  color: var(--green);
+}
+.form-input-premium {
+  width: 100%;
+  padding: 11px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+.form-input-premium::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+/* Native Error Validation with :has() */
+.input-wrapper-premium:has(.form-input-premium:invalid:not(:placeholder-shown)) {
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+.input-wrapper-premium:has(.form-input-premium:invalid:not(:placeholder-shown)) .input-icon-premium {
+  color: var(--red);
+}
+
+/* Password strength */
+.pw-strength {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  height: 3px;
+}
+.pw-strength-bar {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.pw-strength-bar.weak { background: var(--red); }
+.pw-strength-bar.medium { background: #E8A838; }
+.pw-strength-bar.strong { background: var(--green); }
+.pw-strength-text {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Eye password toggle inside premium wrapper */
+.input-wrapper-premium .pw-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.input-wrapper-premium .pw-toggle:hover {
+  background: var(--border);
+}
+.input-wrapper-premium .pw-toggle svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--muted);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.15s;
+}
+.input-wrapper-premium .pw-toggle:hover svg {
+  stroke: var(--text);
+}
+
+/* Action button with sliding scan light highlight */
+.auth-btn {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #1A8F68 0%, #0D5A42 100%);
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(26, 143, 104, 0.2);
+}
+.auth-btn:hover {
+  background: linear-gradient(135deg, #1f9e74 0%, #0e6349 100%);
+  box-shadow: 0 6px 16px rgba(26, 143, 104, 0.3);
+}
+.auth-btn:active {
+  transform: scale(0.975);
+}
+.auth-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2) 50%, transparent);
+  transition: none;
+}
+.auth-btn:hover::after {
+  left: 100%;
+  transition: left 0.75s ease-in-out;
+}
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Divider between options */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid var(--border);
+}
+.auth-divider::before {
+  margin-right: 12px;
+}
+.auth-divider::after {
+  margin-left: 12px;
+}
+
+/* Premium Google Sign-In Button */
+.google-btn {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+.google-btn:hover {
+  background: var(--bg);
+  border-color: var(--muted);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.google-btn:active {
+  transform: translateY(0);
+}
+.google-icon {
+  flex-shrink: 0;
+}
+
+/* Google Account Chooser Modal */
+.google-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: googleFadeIn 0.2s ease;
+}
+.google-modal-backdrop.active {
+  display: flex;
+}
+@keyframes googleFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.google-modal-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+  animation: googleScaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+}
+@keyframes googleScaleUp {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.google-modal-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.google-logo-large {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+.google-modal-header h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: var(--text);
+}
+.google-modal-header p {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.google-modal-header p span {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.google-account-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  background: var(--card);
+}
+
+.google-account-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.google-account-item:last-child {
+  border-bottom: none;
+}
+.google-account-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+[data-theme="dark"] .google-account-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.google-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.google-avatar.addition {
+  background: rgba(0,0,0,0.03);
+  color: var(--muted);
+  border: 1.5px dashed var(--border);
+}
+[data-theme="dark"] .google-avatar.addition {
+  background: rgba(255,255,255,0.02);
+}
+
+.google-account-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+.google-account-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.google-account-email {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.google-custom-form {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  animation: googleFadeIn 0.2s ease;
+}
+.google-custom-form input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 13.5px;
+  outline: none;
+  font-family: inherit;
+}
+.google-custom-form input:focus {
+  border-color: #4285F4;
+}
+.google-custom-actions {
+  display: flex;
+  gap: 10px;
+}
+.google-custom-btn {
+  flex: 1;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.google-custom-btn.submit {
+  background: #4285F4;
+  color: #fff;
+  border-color: #4285F4;
+}
+.google-custom-btn.submit:hover {
+  background: #357ae8;
+}
+.google-custom-btn.cancel:hover {
+  background: rgba(0,0,0,0.02);
+}
+[data-theme="dark"] .google-custom-btn.cancel:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.google-modal-footer {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Messages */
+.auth-msg {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  margin-bottom: 1.25rem;
+  display: none;
+  align-items: center;
+  gap: 10px;
+}
+.auth-msg.show { display: flex; }
+.auth-msg.error {
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid rgba(201,75,43,0.15);
+}
+.auth-msg.success {
+  background: var(--green-light);
+  color: var(--green-dark);
+  border: 1px solid rgba(26,143,104,0.15);
+}
+
+/* Remember / Forgot row */
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  margin-top: -0.25rem;
+}
+.remember-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Remember me custom checkbox style matching dashboard */
+.remember-wrap input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: var(--card);
+  margin: 0;
+  position: relative;
+}
+.remember-wrap input[type="checkbox"]:checked {
+  background: var(--green);
+  border-color: var(--green);
+}
+.remember-wrap input[type="checkbox"]:checked::after {
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 9px;
+  color: #fff;
+  position: absolute;
+}
+.remember-wrap input[type="checkbox"]:hover {
+  border-color: var(--green);
+  box-shadow: 0 0 5px rgba(52, 212, 138, 0.3);
+}
+
+.remember-wrap label {
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.forgot-link {
+  font-size: 13px;
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.forgot-link:hover { text-decoration: underline; }
+
+/* Footer */
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.auth-footer a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.auth-footer a:hover { text-decoration: underline; }
+
+/* Data check screen */
+.data-check-screen {
+  display: none;
+}
+.data-check-screen.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+.data-check-icon {
+  font-size: 48px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.data-check-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.data-check-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.55;
+  text-align: center;
+}
+.data-check-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.data-check-btn {
+  padding: 11px 22px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.data-check-btn:hover {
+  background: var(--bg);
+  border-color: var(--muted);
+}
+.data-check-btn.primary {
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+}
+.data-check-btn.primary:hover {
+  background: var(--green-dark);
+}
+
+/* Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════ */
+@media (max-width: 900px) {
+  .split-left { display: none; }
+  .split-right {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: auto;
+    padding: 1.5rem;
+  }
+  .auth-box {
+    padding: 2.25rem 1.75rem;
+  }
+  .theme-toggle-outside {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .split-right { padding: 1.5rem 1.25rem; }
+  .auth-header-title { font-size: 21px; }
+  .auth-box { padding: 2rem 1.25rem; }
+}
+
+.split-right::-webkit-scrollbar {
+  width: 5px;
+}
+.split-right::-webkit-scrollbar-track {
+  background: transparent;
+}
+.split-right::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="split-wrap">
+
+  <!-- === LEFT PANEL === -->
+  <div class="split-left">
+    <!-- Glowing Background Ambient Orbs -->
+    <div class="glow-orb-left orb-left-1"></div>
+    <div class="glow-orb-left orb-left-2"></div>
+    
+    <!-- Sweep Scanning Laser -->
+    <div class="grid-scan-laser"></div>
+
+    <div class="split-brand">
+      <div class="split-brand-icon">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 22L10 16L16 20L22 10L28 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.25"/>
+          <path d="M8 8H16" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M12 8V18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M20 8V16C20 18.2 18.2 20 16 20H18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="split-brand-text">
+        <div class="split-brand-title">Trading Journal</div>
+        <div class="split-brand-sub">Account Analytics</div>
+      </div>
+    </div>
+
+    <div class="split-center">
+      <h1 class="split-headline">
+        Track every trade.<br>
+        <span>Master your edge.</span>
+      </h1>
+      <p class="split-desc">
+        Upload your trade history CSV to instantly track your win rate, profit factor, and risk-reward ratios. Get AI-powered insights to master your trading discipline—no matter which broker you use.
+      </p>
+
+      <div class="split-stats">
+        <div class="split-stat-card">
+          <div class="split-stat-label">Data Privacy</div>
+          <div class="split-stat-value green">100% Local</div>
+          <div class="split-stat-sub">private SQLite database keeps your data secure</div>
+        </div>
+        <div class="split-stat-card">
+          <div class="split-stat-label">Trade Merging</div>
+          <div class="split-stat-value">Virtual</div>
+          <div class="split-stat-sub">merge and track micro-lots cohesively</div>
+        </div>
+        <div class="split-stat-card">
+          <div class="split-stat-label">P&L Calendar</div>
+          <div class="split-stat-value green">Interactive</div>
+          <div class="split-stat-sub">complete monthly and yearly performance grid</div>
+        </div>
+        <div class="split-stat-card">
+          <div class="split-stat-label">AI Trading Mentor</div>
+          <div class="split-stat-value">Live Chat</div>
+          <div class="split-stat-sub" style="display: flex; align-items: center; gap: 6px;">
+            <span class="active-pulse-dot"></span>
+            <span>real-time analysis & coaching</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="split-bottom">
+      <div class="split-bottom-left">
+        <strong>100% Private.</strong> Your data stays in your browser.
+      </div>
+      <div class="split-trust-badges">
+        <span class="trust-badge">🔒 Encrypted</span>
+        <span class="trust-badge">📴 Offline-First</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- === RIGHT PANEL === -->
+  <div class="split-right">
+    <!-- Glowing Background Ambient Orbs behind auth-box -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- Outside Theme Toggle -->
+    <div class="theme-toggle-outside">
+      <button class="theme-btn" id="themeToggleOutside" title="Toggle dark mode" type="button">
+        <i class="fa-solid fa-sun" id="themeIcon" style="font-size: 18px; color: #F59E0B;"></i>
+      </button>
+    </div>
+
+    <div class="auth-box">
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="auth-header-title" id="authTitle">Welcome back</div>
+        <div class="auth-header-sub" id="authSub">Log in to your trading journal</div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-tabs" id="authTabs">
+        <button class="auth-tab active" data-tab="login" type="button">Log In</button>
+        <button class="auth-tab" data-tab="signup" type="button">Create Account</button>
+      </div>
+
+      <!-- Messages -->
+      <div class="auth-msg error" id="authError"></div>
+      <div class="auth-msg success" id="authSuccess"></div>
+
+      <!-- === LOGIN FORM === -->
+      <form class="auth-form active" id="formLogin" autocomplete="on">
+        <div class="form-group-premium">
+          <label class="form-label-premium" for="loginEmail">Email</label>
+          <div class="input-wrapper-premium">
+            <span class="input-icon-premium">
+              <i class="fa-regular fa-envelope"></i>
+            </span>
+            <input type="email" class="form-input-premium" id="loginEmail" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="form-group-premium">
+          <label class="form-label-premium" for="loginPassword">Password</label>
+          <div class="input-wrapper-premium">
+            <span class="input-icon-premium">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" class="form-input-premium" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" data-target="loginPassword" aria-label="Show password">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="remember-wrap">
+            <input type="checkbox" id="loginRemember">
+            <label for="loginRemember">Remember me</label>
+          </div>
+          <span class="forgot-link" id="forgotLink">Forgot password?</span>
+        </div>
+        <button type="submit" class="auth-btn" id="loginBtn">
+          <i class="fa-solid fa-arrow-right-to-bracket" style="font-size: 13px;"></i> Log In
+        </button>
+
+        <div class="auth-divider">or continue with</div>
+
+        <button type="button" class="google-btn" id="googleLoginBtn">
+          <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+      </form>
+
+      <!-- === SIGNUP FORM === -->
+      <form class="auth-form" id="formSignup" autocomplete="on">
+        <div class="form-group-premium">
+          <label class="form-label-premium" for="signupName">Full Name</label>
+          <div class="input-wrapper-premium">
+            <span class="input-icon-premium">
+              <i class="fa-regular fa-user"></i>
+            </span>
+            <input type="text" class="form-input-premium" id="signupName" placeholder="e.g. Arjun Sharma" autocomplete="name" required maxlength="32">
+          </div>
+        </div>
+        <div class="form-group-premium">
+          <label class="form-label-premium" for="signupEmail">Email</label>
+          <div class="input-wrapper-premium">
+            <span class="input-icon-premium">
+              <i class="fa-regular fa-envelope"></i>
+            </span>
+            <input type="email" class="form-input-premium" id="signupEmail" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="form-group-premium">
+          <label class="form-label-premium" for="signupPassword">Password</label>
+          <div class="input-wrapper-premium">
+            <span class="input-icon-premium">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" class="form-input-premium" id="signupPassword" placeholder="Min 8 characters" autocomplete="new-password" required minlength="8">
+            <button type="button" class="pw-toggle" data-target="signupPassword" aria-label="Show password">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="pw-strength" id="pwStrength">
+            <div class="pw-strength-bar"></div>
+            <div class="pw-strength-bar"></div>
+            <div class="pw-strength-bar"></div>
+          </div>
+          <div class="pw-strength-text" id="pwStrengthText"></div>
+        </div>
+        <div class="form-group-premium">
+          <label class="form-label-premium" for="signupConfirm">Confirm Password</label>
+          <div class="input-wrapper-premium">
+            <span class="input-icon-premium">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" class="form-input-premium" id="signupConfirm" placeholder="Repeat password" autocomplete="new-password" required>
+            <button type="button" class="pw-toggle" data-target="signupConfirm" aria-label="Show password">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn" id="signupBtn">
+          <i class="fa-solid fa-user-plus" style="font-size: 13px;"></i> Create Account
+        </button>
+
+        <div class="auth-divider">or continue with</div>
+
+        <button type="button" class="google-btn" id="googleSignupBtn">
+          <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+      </form>
+
+      <!-- === DATA CHECK SCREEN === -->
+      <div class="data-check-screen" id="dataCheckScreen">
+        <div class="data-check-icon">📊</div>
+        <div class="data-check-title">Ready to trade</div>
+        <div class="data-check-sub" id="dataCheckSub">Checking for your saved trading data...</div>
+        <div class="data-check-actions" id="dataCheckActions"></div>
+        <input type="file" accept=".csv" id="authFileInput" style="display: none;">
+      </div>
+
+      <!-- Footer -->
+      <div class="auth-footer" id="authFooter">
+        New here? <a id="switchToSignup">Create an account</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Google Account Chooser Modal Overlay -->
+<div class="google-modal-backdrop" id="googleAccountModal">
+  <div class="google-modal-card">
+    <div class="google-modal-header">
+      <svg class="google-logo-large" viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+      </svg>
+      <h2>Choose an account</h2>
+      <p>to continue to <span>Trading Journal</span></p>
+    </div>
+    <div class="google-account-list">
+      <div class="google-account-item" data-email="abhishek.sharma@gmail.com" data-name="Abhishek Sharma">
+        <div class="google-avatar" style="background: #1A8F68; color: #FFF;">A</div>
+        <div class="google-account-info">
+          <span class="google-account-name">Abhishek Sharma</span>
+          <span class="google-account-email">abhishek.sharma@gmail.com</span>
+        </div>
+      </div>
+      <div class="google-account-item" data-email="demo.trader@gmail.com" data-name="Demo Trader">
+        <div class="google-avatar" style="background: #4285F4; color: #FFF;">D</div>
+        <div class="google-account-info">
+          <span class="google-account-name">Demo Trader</span>
+          <span class="google-account-email">demo.trader@gmail.com</span>
+        </div>
+      </div>
+      <div class="google-account-item custom-account-trigger" id="useAnotherAccountBtn">
+        <div class="google-avatar addition"><i class="fa-solid fa-user-plus"></i></div>
+        <div class="google-account-info">
+          <span class="google-account-name" style="font-weight: 500; color: var(--green);">Use another account</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="google-custom-form" id="googleCustomForm">
+      <input type="text" id="googleCustomName" placeholder="Full Name" required>
+      <input type="email" id="googleCustomEmail" placeholder="Email Address" required>
+      <div class="google-custom-actions">
+        <button type="button" class="google-custom-btn cancel" id="cancelCustomBtn">Back</button>
+        <button type="button" class="google-custom-btn submit" id="submitCustomBtn">Sign In</button>
+      </div>
+    </div>
+
+    <div class="google-modal-footer">
+      To continue, Google will share your name, email address, language preference, and profile picture with Trading Journal.
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const STORAGE_THEME_KEY = 'exness_theme_v1';
+
+  /* DOM Cache */
+  const els = {
+    tabLogin: document.querySelector('[data-tab="login"]'),
+    tabSignup: document.querySelector('[data-tab="signup"]'),
+    formLogin: document.getElementById('formLogin'),
+    formSignup: document.getElementById('formSignup'),
+    dataCheckScreen: document.getElementById('dataCheckScreen'),
+    authFooter: document.getElementById('authFooter'),
+    authError: document.getElementById('authError'),
+    authSuccess: document.getElementById('authSuccess'),
+    authTitle: document.getElementById('authTitle'),
+    authSub: document.getElementById('authSub'),
+    forgotLink: document.getElementById('forgotLink'),
+    loginBtn: document.getElementById('loginBtn'),
+    signupBtn: document.getElementById('signupBtn'),
+    pwStrength: document.getElementById('pwStrength'),
+    pwStrengthText: document.getElementById('pwStrengthText'),
+    dataCheckSub: document.getElementById('dataCheckSub'),
+    dataCheckActions: document.getElementById('dataCheckActions'),
+    switchToSignup: document.getElementById('switchToSignup'),
+    authFileInput: document.getElementById('authFileInput')
+  };
+
+  let currentTab = 'login';
+
+  /* Toggle tab logic */
+  function switchTab(tab) {
+    currentTab = tab;
+    hideMsg();
+
+    if (tab === 'login') {
+      els.tabLogin.classList.add('active');
+      els.tabSignup.classList.remove('active');
+      els.formLogin.classList.add('active');
+      els.formSignup.classList.remove('active');
+      els.dataCheckScreen.classList.remove('active');
+      els.authTitle.textContent = 'Welcome back';
+      els.authSub.textContent = 'Log in to your trading journal';
+      els.authFooter.innerHTML = 'New here? <a id="switchToSignup">Create an account</a>';
+      
+      document.getElementById('switchToSignup').addEventListener('click', () => switchTab('signup'));
+      els.authFooter.style.display = 'block';
+    } else {
+      els.tabSignup.classList.add('active');
+      els.tabLogin.classList.remove('active');
+      els.formSignup.classList.add('active');
+      els.formLogin.classList.remove('active');
+      els.dataCheckScreen.classList.remove('active');
+      els.authTitle.textContent = 'Get started';
+      els.authSub.textContent = 'Create your free trading journal';
+      els.authFooter.innerHTML = 'Already have an account? <a id="switchToLogin">Log in</a>';
+      
+      document.getElementById('switchToLogin').addEventListener('click', () => switchTab('login'));
+      els.authFooter.style.display = 'block';
+    }
+  }
+
+  els.tabLogin.addEventListener('click', () => switchTab('login'));
+  els.tabSignup.addEventListener('click', () => switchTab('signup'));
+  els.switchToSignup.addEventListener('click', () => switchTab('signup'));
+
+  if (els.authFileInput) {
+    els.authFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        handleAuthFile(file);
+      }
+      e.target.value = ''; // Reset file input
+    });
+  }
+
+  /* Alerts */
+  function showError(msg) {
+    els.authError.textContent = '⚠ ' + msg;
+    els.authError.classList.add('show');
+    els.authSuccess.classList.remove('show');
+  }
+  function showSuccess(msg) {
+    els.authSuccess.textContent = '✓ ' + msg;
+    els.authSuccess.classList.add('show');
+    els.authError.classList.remove('show');
+  }
+  function hideMsg() {
+    els.authError.classList.remove('show');
+    els.authSuccess.classList.remove('show');
+  }
+
+  /* Password strength checker */
+  const signupPassword = document.getElementById('signupPassword');
+  const pwBars = els.pwStrength.querySelectorAll('.pw-strength-bar');
+
+  function checkStrength(pw) {
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (pw.length >= 12) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+    pwBars.forEach((bar, i) => {
+      bar.className = 'pw-strength-bar';
+      if (i === 0 && score >= 2) bar.classList.add('weak');
+      if (i === 1 && score >= 3) bar.classList.add('medium');
+      if (i === 2 && score >= 4) bar.classList.add('strong');
+    });
+
+    if (pw.length === 0) els.pwStrengthText.textContent = '';
+    else if (score < 2) els.pwStrengthText.textContent = 'Weak — add more characters';
+    else if (score < 3) els.pwStrengthText.textContent = 'Fair — mix letters & numbers';
+    else if (score < 4) els.pwStrengthText.textContent = 'Good — add a symbol';
+    else els.pwStrengthText.textContent = 'Strong password ✓';
+  }
+  signupPassword.addEventListener('input', (e) => checkStrength(e.target.value));
+
+  /* Submit Signup */
+  els.formSignup.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMsg();
+
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+
+    if (!name || !email || !password) {
+      showError('Please fill in all fields.');
+      return;
+    }
+    if (password.length < 8) {
+      showError('Password must be at least 8 characters.');
+      return;
+    }
+    if (password !== confirm) {
+      showError('Passwords do not match.');
+      document.getElementById('signupConfirm').classList.add('error');
+      return;
+    }
+    document.getElementById('signupConfirm').classList.remove('error');
+
+    els.signupBtn.disabled = true;
+    els.signupBtn.innerHTML = '<span class="spinner"></span> Creating account...';
+
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        showError(result.error || 'Registration failed.');
+      } else {
+        showSuccess('Account created! Logging you in...');
+        setTimeout(() => showDataCheck(), 1000);
+      }
+    } catch (err) {
+      showError('Network error. Please try again.');
+    } finally {
+      els.signupBtn.disabled = false;
+      els.signupBtn.textContent = 'Create Account';
+    }
+  });
+
+  /* Submit Login */
+  els.formLogin.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMsg();
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+      showError('Please enter both email and password.');
+      return;
+    }
+
+    els.loginBtn.disabled = true;
+    els.loginBtn.innerHTML = '<span class="spinner"></span> Logging in...';
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        showError(result.error || 'Invalid credentials.');
+      } else {
+        showDataCheck();
+      }
+    } catch (err) {
+      showError('Network error. Please try again.');
+    } finally {
+      els.loginBtn.disabled = false;
+      els.loginBtn.textContent = 'Log In';
+    }
+  });
+
+  /* Google Account Chooser Logic */
+  const googleLoginBtn = document.getElementById('googleLoginBtn');
+  const googleAccountModal = document.getElementById('googleAccountModal');
+  const accountList = googleAccountModal.querySelector('.google-account-list');
+  const customForm = document.getElementById('googleCustomForm');
+  const customNameInput = document.getElementById('googleCustomName');
+  const customEmailInput = document.getElementById('googleCustomEmail');
+
+  function openGoogleModal() {
+    googleAccountModal.classList.add('active');
+    accountList.style.display = 'flex';
+    customForm.style.display = 'none';
+    customNameInput.value = '';
+    customEmailInput.value = '';
+  }
+
+  function closeGoogleModal() {
+    googleAccountModal.classList.remove('active');
+  }
+
+  // Click outside to close
+  googleAccountModal.addEventListener('click', (e) => {
+    if (e.target === googleAccountModal) closeGoogleModal();
+  });
+
+  // Bind all Google sign-in buttons (both Login and Sign Up boxes)
+  document.querySelectorAll('.google-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      hideMsg();
+      openGoogleModal();
+    });
+  });
+
+  // Select predefined accounts
+  googleAccountModal.querySelectorAll('.google-account-item[data-email]').forEach(item => {
+    item.addEventListener('click', async () => {
+      const email = item.getAttribute('data-email');
+      const name = item.getAttribute('data-name');
+      closeGoogleModal();
+      await executeGoogleLogin(email, name);
+    });
+  });
+
+  // Use another account
+  const useAnotherAccountBtn = document.getElementById('useAnotherAccountBtn');
+  if (useAnotherAccountBtn) {
+    useAnotherAccountBtn.addEventListener('click', () => {
+      accountList.style.display = 'none';
+      customForm.style.display = 'flex';
+      customNameInput.focus();
+    });
+  }
+
+  // Cancel custom account input
+  const cancelCustomBtn = document.getElementById('cancelCustomBtn');
+  if (cancelCustomBtn) {
+    cancelCustomBtn.addEventListener('click', () => {
+      customForm.style.display = 'none';
+      accountList.style.display = 'flex';
+    });
+  }
+
+  // Submit custom account input
+  const submitCustomBtn = document.getElementById('submitCustomBtn');
+  if (submitCustomBtn) {
+    submitCustomBtn.addEventListener('click', async () => {
+      const name = customNameInput.value.trim();
+      const email = customEmailInput.value.trim();
+
+      if (!name || !email) {
+        alert('Please fill in both fields.');
+        return;
+      }
+      closeGoogleModal();
+      await executeGoogleLogin(email, name);
+    });
+  }
+
+  async function executeGoogleLogin(email, name) {
+    const googleButtons = document.querySelectorAll('.google-btn');
+    googleButtons.forEach(btn => {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-top-color:var(--text)"></span> Connecting to Google...';
+    });
+
+    try {
+      const response = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        showError(result.error || 'Google Login failed.');
+      } else {
+        showSuccess(`Welcome back, ${name}! Signed in via Google.`);
+        setTimeout(() => showDataCheck(), 1000);
+      }
+    } catch (err) {
+      showError('Network error connecting to Google service.');
+    } finally {
+      googleButtons.forEach(btn => {
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+          </svg>
+          <span>Continue with Google</span>
+        `;
+      });
+    }
+  }
+
+  /* CSV Parser helpers */
+  function splitCSVLine(line, sep) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === sep && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current);
+    return result;
+  }
+
+  function findHeaderIndex(headers, aliases) {
+    for (const alias of aliases) {
+      const idx = headers.indexOf(alias);
+      if (idx !== -1) return idx;
+    }
+    for (const alias of aliases) {
+      const idx = headers.findIndex(h => h.includes(alias));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split(/\r?\n/);
+    if (lines.length < 2) throw new Error('CSV appears empty.');
+    const sep = lines[0].includes('\t') ? '\t' : ',';
+    
+    // Normalize headers
+    const headers = splitCSVLine(lines[0], sep).map(h => 
+      h.trim().replace(/^"|"$/g, '').toLowerCase().replace(/\s+/g, '_')
+    );
+
+    const aliasMap = {
+      ticket: ['ticket', 'position_id', 'id', 'order', 'deal', 'transaction'],
+      open: ['opening_time_utc', 'open_time_utc', 'open_time', 'opening_time', 'open'],
+      close: ['closing_time_utc', 'close_time_utc', 'close_time', 'closing_time', 'close'],
+      type: ['type', 'action', 'direction', 'cmd', 'side'],
+      symbol: ['symbol', 'instrument', 'asset', 'ticker', 'pair'],
+      lots: ['lots', 'volume', 'amount', 'size', 'vol'],
+      profit: ['profit', 'pnl', 'gain', 'net_profit', 'profit_loss']
+    };
+
+    const idxMap = {};
+    for (const [key, aliases] of Object.entries(aliasMap)) {
+      idxMap[key] = findHeaderIndex(headers, aliases);
+    }
+
+    const required = ['open', 'close', 'type', 'symbol', 'profit'];
+    const missing = required.filter(k => idxMap[k] === -1);
+    if (missing.length) {
+      throw new Error('Missing columns: ' + missing.map(k => aliasMap[k][0]).join(', ') + '. Please export a valid trade history CSV.');
+    }
+
+    const cleanNumStr = str => str.replace(/[$,\s]/g, '');
+    const trades = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const cols = splitCSVLine(line, sep).map(c => c.trim().replace(/^"|"$/g, ''));
+      
+      const profitVal = cols[idxMap['profit']];
+      if (!profitVal) continue;
+      const profit = parseFloat(cleanNumStr(profitVal));
+      if (isNaN(profit)) continue;
+      
+      const openStr = cols[idxMap['open']];
+      const closeStr = cols[idxMap['close']];
+      if (!openStr || !closeStr) continue;
+      
+      const ticketIdx = idxMap['ticket'];
+      const ticket = ticketIdx !== -1 && cols[ticketIdx] ? cols[ticketIdx] : String(1000000 + i);
+      
+      const typeIdx = idxMap['type'];
+      const type = typeIdx !== -1 ? cols[typeIdx].toLowerCase() : 'buy';
+      
+      const symbolIdx = idxMap['symbol'];
+      const symbol = symbolIdx !== -1 ? cols[symbolIdx].toUpperCase() : 'UNKNOWN';
+      
+      const lotsIdx = idxMap['lots'];
+      const lotsVal = lotsIdx !== -1 ? cols[lotsIdx] : '0.01';
+      const lots = parseFloat(cleanNumStr(lotsVal)) || 0.01;
+      
+      trades.push({
+        ticket,
+        open: openStr,
+        close: closeStr,
+        type,
+        symbol,
+        lots,
+        profit
+      });
+    }
+
+    if (!trades.length) throw new Error('No valid closed trades found.');
+    return trades;
+  }
+
+  async function handleAuthFile(file) {
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      els.dataCheckSub.innerHTML = '<span style="color:var(--danger)">Please upload a .csv file.</span>';
+      return;
+    }
+
+    els.dataCheckSub.innerHTML = '<span class="spinner" style="border-top-color:var(--text)"></span> Reading file...';
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        els.dataCheckSub.innerHTML = '<span class="spinner" style="border-top-color:var(--text)"></span> Parsing trades...';
+        const trades = parseCSV(e.target.result);
+        
+        els.dataCheckSub.innerHTML = '<span class="spinner" style="border-top-color:var(--text)"></span> Clearing old data...';
+        // Clear previous CSV data
+        const deleteRes = await fetch('/api/trades', { method: 'DELETE' });
+        if (!deleteRes.ok) {
+          throw new Error('Failed to clear previous trade history before upload.');
+        }
+
+        // Reset Starting Capital & Daily Rules
+        await fetch('/api/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            startingCapital: 0,
+            dailyLossLimit: 0,
+            dailyProfitTarget: 0,
+            dailyLossType: 'usd'
+          })
+        });
+
+        els.dataCheckSub.innerHTML = `<span class="spinner" style="border-top-color:var(--text)"></span> Uploading ${trades.length} trades...`;
+        const rawForStorage = trades.map(t=>({
+          ticket: t.ticket, open: t.open, close: t.close,
+          type: t.type, symbol: t.symbol, lots: t.lots, profit: t.profit
+        }));
+
+        const response = await fetch('/api/trades/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ trades: rawForStorage })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          els.dataCheckSub.innerHTML = `<span style="color:var(--success)">Successfully imported ${result.count} trades! Redirecting...</span>`;
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          const err = await response.json();
+          throw new Error(err.error || 'Failed to upload trades to database.');
+        }
+      } catch (err) {
+        console.error(err);
+        els.dataCheckSub.innerHTML = `<span style="color:var(--danger)">Error: ${err.message}</span><br>Please try again.`;
+        
+        // Recheck database state to restore the action buttons
+        setTimeout(() => showDataCheck(), 2500);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  /* Data check screen */
+  async function showDataCheck() {
+    els.formLogin.classList.remove('active');
+    els.formSignup.classList.remove('active');
+    els.tabLogin.style.display = 'none';
+    els.tabSignup.style.display = 'none';
+    els.authFooter.style.display = 'none';
+
+    els.authTitle.textContent = 'Almost there';
+    els.authSub.textContent = "Let's check your journal database";
+    els.dataCheckScreen.classList.add('active');
+
+    els.dataCheckSub.innerHTML = 'Connecting to database...';
+    els.dataCheckActions.innerHTML = '';
+
+    try {
+      const response = await fetch('/api/trades');
+      if (response.ok) {
+        const trades = await response.json();
+        
+        if (trades && trades.length > 0) {
+          els.dataCheckSub.innerHTML = `Found <strong>${trades.length} trades</strong> in your journal database.<br>Press Go to Dashboard to inspect them.`;
+          els.dataCheckActions.innerHTML = `
+            <button class="data-check-btn primary" id="gotoDashboardBtn">Go to Dashboard →</button>
+            <button class="data-check-btn" id="uploadNewBtn">Upload New CSV</button>
+          `;
+        } else {
+          els.dataCheckSub.innerHTML = 'Your journal database is empty.<br>Upload a CSV file or start with demo trades.';
+          els.dataCheckActions.innerHTML = `
+            <button class="data-check-btn primary" id="uploadNewBtn">Upload CSV</button>
+            <button class="data-check-btn" id="demoDataBtn">Use Demo Trades</button>
+          `;
+        }
+
+        // Attach listeners
+        const gotoBtn = document.getElementById('gotoDashboardBtn');
+        const uploadBtn = document.getElementById('uploadNewBtn');
+        const demoBtn = document.getElementById('demoDataBtn');
+
+        if (gotoBtn) gotoBtn.addEventListener('click', () => window.location.href = 'dashboard.html');
+        if (uploadBtn) {
+          uploadBtn.addEventListener('click', () => {
+            if (els.authFileInput) els.authFileInput.click();
+          });
+        }
+        if (demoBtn) {
+          demoBtn.addEventListener('click', async () => {
+            demoBtn.disabled = true;
+            demoBtn.innerHTML = '<span class="spinner" style="border-top-color:#1A1A18"></span> Seeding...';
+            const SEED = [
+              {ticket:6060561,open:'2026-05-08T12:07:00Z',close:'2026-05-08T12:11:13Z',type:'sell',symbol:'XAUUSD',lots:0.01,profit:5.78},
+              {ticket:6060010,open:'2026-05-08T11:56:05Z',close:'2026-05-08T12:03:31Z',type:'buy',symbol:'XAUUSD',lots:0.01,profit:-3.50},
+              {ticket:6058395,open:'2026-05-08T11:14:09Z',close:'2026-05-08T11:29:08Z',type:'buy',symbol:'USOIL',lots:0.01,profit:-2.01},
+              {ticket:6057679,open:'2026-05-08T11:04:15Z',close:'2026-05-08T11:11:21Z',type:'buy',symbol:'XAUUSD',lots:0.01,profit:-4.00},
+              {ticket:5977675,open:'2026-05-07T10:04:08Z',close:'2026-05-07T10:05:23Z',type:'sell',symbol:'XAUUSD',lots:0.01,profit:-4.00},
+            ];
+
+            try {
+              const res = await fetch('/api/trades/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ trades: SEED })
+              });
+              if (res.ok) {
+                window.location.href = 'dashboard.html';
+              } else {
+                showError('Failed to import demo trades.');
+              }
+            } catch (err) {
+              showError('Network error importing demo trades.');
+            }
+          });
+        }
+
+      } else {
+        // Not authorized, redirect back to login
+        switchTab('login');
+      }
+    } catch (err) {
+      els.dataCheckSub.innerHTML = 'Failed to connect to backend server. Is it running?';
+    }
+  }
+
+  /* Forgot password */
+  els.forgotLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) {
+      showError('Please enter your email first.');
+      document.getElementById('loginEmail').focus();
+      return;
+    }
+    showSuccess('If this email matches our database, a password reset link has been dispatched to: ' + email);
+  });
+
+  /* Theme setup */
+  function loadTheme() {
+    try {
+      const saved = localStorage.getItem(STORAGE_THEME_KEY);
+      const icon = document.getElementById('themeIcon');
+      const btn = document.getElementById('themeToggleOutside');
+      if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (icon) {
+          icon.className = 'fa-solid fa-moon';
+          icon.style.color = '#B8B6B0';
+        }
+        if (btn) {
+          btn.setAttribute('title', 'Toggle light mode');
+        }
+      } else {
+        if (icon) {
+          icon.className = 'fa-solid fa-sun';
+          icon.style.color = '#F59E0B';
+        }
+        if (btn) {
+          btn.setAttribute('title', 'Toggle dark mode');
+        }
+      }
+    } catch(e) {}
+  }
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const icon = document.getElementById('themeIcon');
+    const btn = document.getElementById('themeToggleOutside');
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem(STORAGE_THEME_KEY, 'light');
+      if (icon) {
+        icon.className = 'fa-solid fa-sun';
+        icon.style.color = '#F59E0B';
+      }
+      if (btn) {
+        btn.setAttribute('title', 'Toggle dark mode');
+      }
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem(STORAGE_THEME_KEY, 'dark');
+      if (icon) {
+        icon.className = 'fa-solid fa-moon';
+        icon.style.color = '#B8B6B0';
+      }
+      if (btn) {
+        btn.setAttribute('title', 'Toggle light mode');
+      }
+    }
+  }
+  const themeBtn = document.getElementById('themeToggleOutside');
+  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+  loadTheme();
+
+  /* Password visibility toggle */
+  document.querySelectorAll('.pw-toggle').forEach((btn) => {
+    btn.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      if (!input) return;
+
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+
+      const svg = this.querySelector('svg');
+      if (isHidden) {
+        svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        this.setAttribute('aria-label', 'Hide password');
+      } else {
+        svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        this.setAttribute('aria-label', 'Show password');
+      }
+    });
+  });
+
+  /* Auto-login check */
+  async function checkAutoLogin() {
+    try {
+      const res = await fetch('/api/auth/session');
+      if (res.ok) {
+        const session = await res.json();
+        if (session.authenticated) {
+          showDataCheck();
+        } else {
+          switchTab('login');
+        }
+      } else {
+        switchTab('login');
+      }
+    } catch (e) {
+      switchTab('login');
+    }
+  }
+
+  checkAutoLogin();
+
+  /* Spotlight effect on stats cards */
+  document.querySelectorAll('.split-stat-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--x', `${x}px`);
+      card.style.setProperty('--y', `${y}px`);
+    });
+  });
+})();
+</script>
+</body>
+</html>

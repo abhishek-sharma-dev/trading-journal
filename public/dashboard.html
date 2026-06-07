@@ -5203,18 +5203,21 @@ function saveGroupNotes(groupId, notes) {
 
 function applyVirtualGrouping(trades) {
   const groups = getVirtualGroups();
-  const groupedTickets = new Set();
+  const groupedIds = new Set();
   
   Object.values(groups).forEach(g => {
     if (g.tickets && Array.isArray(g.tickets)) {
-      g.tickets.forEach(ticket => groupedTickets.add(String(ticket)));
+      g.tickets.forEach(ticketOrId => groupedIds.add(String(ticketOrId)));
     }
   });
 
   const finalTrades = [];
   const tradeMap = {};
   trades.forEach(t => {
-    tradeMap[String(t.ticket)] = t;
+    tradeMap[String(t.id)] = t;
+    if (!tradeMap[String(t.ticket)]) {
+      tradeMap[String(t.ticket)] = t;
+    }
   });
 
   // 1. Process all virtual groups
@@ -5223,21 +5226,23 @@ function applyVirtualGrouping(trades) {
 
     // Find all sub-trades present in dataset
     const subTrades = g.tickets
-      .map(ticket => tradeMap[String(ticket)])
+      .map(ticketOrId => tradeMap[String(ticketOrId)])
       .filter(t => t !== undefined);
 
     if (subTrades.length === 0) return;
 
-    // Sort sub-trades by close time
-    subTrades.sort((a, b) => a.closeIST - b.closeIST);
+    const uniqueSubTrades = [...new Set(subTrades)];
 
-    const totalProfit = subTrades.reduce((sum, t) => sum + t.profit, 0);
-    const totalLots = subTrades.reduce((sum, t) => sum + t.lots, 0);
+    // Sort sub-trades by close time
+    uniqueSubTrades.sort((a, b) => a.closeIST - b.closeIST);
+
+    const totalProfit = uniqueSubTrades.reduce((sum, t) => sum + t.profit, 0);
+    const totalLots = uniqueSubTrades.reduce((sum, t) => sum + t.lots, 0);
 
     // Compute entry/exit prices using weighted averages
     let entrySum = 0;
     let exitSum = 0;
-    subTrades.forEach(st => {
+    uniqueSubTrades.forEach(st => {
       const prices = getDeterministicPrices(st);
       entrySum += parseFloat(prices.entry) * st.lots;
       exitSum += parseFloat(prices.exit) * st.lots;
@@ -5247,11 +5252,11 @@ function applyVirtualGrouping(trades) {
     const avgExit = totalLots > 0 ? (exitSum / totalLots) : 0;
 
     let decimals = 2;
-    const sym = subTrades[0].symbol.toUpperCase();
+    const sym = uniqueSubTrades[0].symbol.toUpperCase();
     if (avgEntry < 5) decimals = 5;
 
-    const firstTrade = subTrades[0];
-    const lastTrade = subTrades[subTrades.length - 1];
+    const firstTrade = uniqueSubTrades[0];
+    const lastTrade = uniqueSubTrades[uniqueSubTrades.length - 1];
 
     const mergedTrade = {
       ticket: 'merged:' + groupId,
@@ -8579,8 +8584,9 @@ function renderAnalysisCards() {
       const prices = getDeterministicPrices(t);
 
       if (t.isMerged) {
+        const rowId = t.id || t.ticket;
         return `
-          <tr class="analysis-table-row" data-ticket="${t.ticket}">
+          <tr class="analysis-table-row" data-id="${rowId}" data-ticket="${t.ticket}">
             <td class="analysis-checkbox-cell" style="padding: 14px 10px 14px 18px !important; width: 30px; text-align: center;"></td>
             <td style="padding: 14px 18px; font-weight: 700; color: var(--text);">
               ${t.symbol.toUpperCase()}
@@ -8599,7 +8605,7 @@ function renderAnalysisCards() {
             <td style="padding: 14px 10px; text-align: center;"><span class="row-chevron"><i class="fa-solid fa-chevron-right"></i></span></td>
           </tr>
           
-          <tr class="analysis-card analysis-table-drawer-row" id="drawer-${t.ticket}" data-ticket="${t.ticket}" style="display: none; background: var(--bg); border-bottom: 1px solid var(--border);">
+          <tr class="analysis-card analysis-table-drawer-row" id="drawer-${rowId}" data-id="${rowId}" data-ticket="${t.ticket}" style="display: none; background: var(--bg); border-bottom: 1px solid var(--border);">
             <td colspan="8" style="padding: 16px 24px;">
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: stretch;">
                 <!-- Col 1: Group Specifications -->
@@ -8666,10 +8672,11 @@ function renderAnalysisCards() {
         `;
       }
 
+      const rowId = t.id || t.ticket;
       return `
-        <tr class="analysis-table-row" data-ticket="${t.ticket}">
+        <tr class="analysis-table-row" data-id="${rowId}" data-ticket="${t.ticket}">
           <td class="analysis-checkbox-cell" style="padding: 14px 10px 14px 18px !important; width: 30px; text-align: center;">
-            <input type="checkbox" class="analysis-row-checkbox" data-ticket="${t.ticket}" data-symbol="${t.symbol}" data-side="${t.type}" title="Select to merge this trade virtually">
+            <input type="checkbox" class="analysis-row-checkbox" data-id="${rowId}" data-ticket="${t.ticket}" data-symbol="${t.symbol}" data-side="${t.type}" title="Select to merge this trade virtually">
           </td>
           <td style="padding: 14px 18px; font-weight: 700; color: var(--text);">${t.symbol.toUpperCase()}</td>
           <td style="padding: 14px 18px;">
@@ -8685,7 +8692,7 @@ function renderAnalysisCards() {
           <td style="padding: 14px 10px; text-align: center;"><span class="row-chevron"><i class="fa-solid fa-chevron-right"></i></span></td>
         </tr>
         
-        <tr class="analysis-card analysis-table-drawer-row" id="drawer-${t.ticket}" data-ticket="${t.ticket}" style="display: none; background: var(--bg); border-bottom: 1px solid var(--border);">
+        <tr class="analysis-card analysis-table-drawer-row" id="drawer-${rowId}" data-id="${rowId}" data-ticket="${t.ticket}" style="display: none; background: var(--bg); border-bottom: 1px solid var(--border);">
           <td colspan="8" style="padding: 16px 24px;">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: stretch;">
               <!-- Col 1: Metadata & Settings -->
@@ -8707,7 +8714,7 @@ function renderAnalysisCards() {
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                   <label style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; display: block; letter-spacing: 0.05em;">Timeframe</label>
-                  <select class="card-timeframe" data-ticket="${t.ticket}" style="width: 100%; padding: 10px 36px 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card) url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%239A9890' d='M6 8L1 3h10z'/%3E%3C/svg%3E&quot;) no-repeat right 14px center; color: var(--text); font-size: 12.5px; outline: none; cursor: pointer; font-weight: 500; font-family: inherit; height: 40px; -webkit-appearance: none; appearance: none;">
+                  <select class="card-timeframe" data-id="${rowId}" data-ticket="${t.ticket}" style="width: 100%; padding: 10px 36px 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card) url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%239A9890' d='M6 8L1 3h10z'/%3E%3C/svg%3E&quot;) no-repeat right 14px center; color: var(--text); font-size: 12.5px; outline: none; cursor: pointer; font-weight: 500; font-family: inherit; height: 40px; -webkit-appearance: none; appearance: none;">
                     <option value="">Select timeframe...</option>
                     <option value="M1" ${t.timeframe === 'M1' ? 'selected' : ''}>M1 (1 Minute)</option>
                     <option value="M3" ${t.timeframe === 'M3' ? 'selected' : ''}>M3 (3 Minutes)</option>
@@ -8722,38 +8729,38 @@ function renderAnalysisCards() {
                   </select>
                 </div>
               </div>
-
+ 
               <!-- Col 2: Journal notes -->
               <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 14px; height: 100%;">
                 <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
                   <label style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; display: block; letter-spacing: 0.05em;">Journal Notes</label>
-                  <textarea class="card-notes" data-ticket="${t.ticket}" placeholder="Enter trade setup notes, psychological triggers, rules followed/broken..." style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12.5px; resize: none; outline: none; font-family: inherit; line-height: 1.5; flex: 1; min-height: 128px;">${t.notes || ''}</textarea>
+                  <textarea class="card-notes" data-id="${rowId}" data-ticket="${t.ticket}" placeholder="Enter trade setup notes, psychological triggers, rules followed/broken..." style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 12.5px; resize: none; outline: none; font-family: inherit; line-height: 1.5; flex: 1; min-height: 128px;">${t.notes || ''}</textarea>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                   <span style="font-size: 10px; visibility: hidden; pointer-events: none; display: block; height: 15px;">Spacer</span>
-                  <button class="btn-card-save-notes" data-ticket="${t.ticket}" style="font-size: 12px; padding: 10px 16px; border: none; background: var(--green); color: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.15s; width: 100%; height: 40px;">
+                  <button class="btn-card-save-notes" data-id="${rowId}" data-ticket="${t.ticket}" style="font-size: 12px; padding: 10px 16px; border: none; background: var(--green); color: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.15s; width: 100%; height: 40px;">
                     <i class="fa-regular fa-floppy-disk"></i> Save Journal Entry
                   </button>
                 </div>
               </div>
-
+ 
               <!-- Col 3: Screenshot Dropzone -->
               <div style="display: flex; flex-direction: column; gap: 6px; height: 100%;">
                 <label style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; display: block; letter-spacing: 0.05em;">Chart Screenshot</label>
-                <div class="card-screenshot-dropzone" data-ticket="${t.ticket}" style="border: 1.5px dashed var(--border); border-radius: 12px; background: var(--card); padding: 16px; text-align: center; cursor: pointer; flex: 1; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; position: relative; transition: border-color 0.15s;">
-                  <input type="file" class="card-screenshot-input" data-ticket="${t.ticket}" accept="image/*" style="display: none;">
+                <div class="card-screenshot-dropzone" data-id="${rowId}" data-ticket="${t.ticket}" style="border: 1.5px dashed var(--border); border-radius: 12px; background: var(--card); padding: 16px; text-align: center; cursor: pointer; flex: 1; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; position: relative; transition: border-color 0.15s;">
+                  <input type="file" class="card-screenshot-input" data-id="${rowId}" data-ticket="${t.ticket}" accept="image/*" style="display: none;">
                   
-                  <img class="card-screenshot-preview" data-ticket="${t.ticket}" src="${t.screenshotUrl || ''}" style="max-width: 100%; max-height: 140px; border-radius: 8px; display: ${t.screenshotUrl ? 'block' : 'none'}; object-fit: contain; cursor: zoom-in;">
+                  <img class="card-screenshot-preview" data-id="${rowId}" data-ticket="${t.ticket}" src="${t.screenshotUrl || ''}" style="max-width: 100%; max-height: 140px; border-radius: 8px; display: ${t.screenshotUrl ? 'block' : 'none'}; object-fit: contain; cursor: zoom-in;">
                   
-                  <div class="card-screenshot-placeholder" data-ticket="${t.ticket}" style="display: ${t.screenshotUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; gap: 6px;">
+                  <div class="card-screenshot-placeholder" data-id="${rowId}" data-ticket="${t.ticket}" style="display: ${t.screenshotUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; gap: 6px;">
                     <i class="fa-regular fa-image" style="font-size: 22px; color: var(--muted);"></i>
                     <span style="font-size: 12px; font-weight: 600; color: var(--text);">Click or Drag to Upload Chart</span>
                     <span style="font-size: 10px; color: var(--muted);">PNG, JPG, JPEG supported</span>
                   </div>
-
-                  <div class="card-screenshot-controls" data-ticket="${t.ticket}" style="display: ${t.screenshotUrl ? 'flex' : 'none'}; gap: 8px; margin-top: 8px; justify-content: center; width: 100%;">
-                    <button class="btn-card-replace-ss" data-ticket="${t.ticket}" style="font-size: 10.5px; padding: 5px 12px; border: 1px solid var(--border); background: var(--card); border-radius: 6px; cursor: pointer; color: var(--text); font-weight: 500; flex: 1;">Replace</button>
-                    <button class="btn-card-remove-ss" data-ticket="${t.ticket}" style="font-size: 10.5px; padding: 5px 12px; border: 1px solid var(--red); background: rgba(201, 75, 43, 0.05); color: var(--red); border-radius: 6px; cursor: pointer; font-weight: 500; flex: 1;">Remove</button>
+ 
+                  <div class="card-screenshot-controls" data-id="${rowId}" data-ticket="${t.ticket}" style="display: ${t.screenshotUrl ? 'flex' : 'none'}; gap: 8px; margin-top: 8px; justify-content: center; width: 100%;">
+                    <button class="btn-card-replace-ss" data-id="${rowId}" data-ticket="${t.ticket}" style="font-size: 10.5px; padding: 5px 12px; border: 1px solid var(--border); background: var(--card); border-radius: 6px; cursor: pointer; color: var(--text); font-weight: 500; flex: 1;">Replace</button>
+                    <button class="btn-card-remove-ss" data-id="${rowId}" data-ticket="${t.ticket}" style="font-size: 10.5px; padding: 5px 12px; border: 1px solid var(--red); background: rgba(201, 75, 43, 0.05); color: var(--red); border-radius: 6px; cursor: pointer; font-weight: 500; flex: 1;">Remove</button>
                   </div>
                 </div>
               </div>
@@ -8769,8 +8776,8 @@ function renderAnalysisCards() {
         if (e.target.closest('.analysis-row-checkbox') || e.target.closest('.card-timeframe') || e.target.closest('.card-notes') || e.target.closest('.btn-card-save-notes') || e.target.closest('.card-screenshot-dropzone') || e.target.closest('.btn-card-replace-ss') || e.target.closest('.btn-card-remove-ss') || e.target.closest('.btn-card-unmerge') || e.target.closest('.card-group-notes') || e.target.closest('.btn-card-save-group-notes')) {
           return;
         }
-        const ticket = this.dataset.ticket;
-        const drawer = document.getElementById('drawer-' + ticket);
+        const id = this.dataset.id || this.dataset.ticket;
+        const drawer = document.getElementById('drawer-' + id);
         if (drawer) {
           const isCollapsed = drawer.style.display === 'none';
           drawer.style.display = isCollapsed ? 'table-row' : 'none';
@@ -8787,8 +8794,9 @@ function renderAnalysisCards() {
     // Save Notes Button click handler (fallback manual save)
     tableBody.querySelectorAll('.btn-card-save-notes').forEach(btn => {
       btn.addEventListener('click', async function() {
+        const id = this.dataset.id || this.dataset.ticket;
         const ticket = this.dataset.ticket;
-        const drawer = document.getElementById('drawer-' + ticket);
+        const drawer = document.getElementById('drawer-' + id);
         if (!drawer) return;
         
         const selectEl = drawer.querySelector('.card-timeframe');
@@ -8894,7 +8902,7 @@ function renderAnalysisCards() {
       newApplyBtn.addEventListener('click', () => {
         const checked = Array.from(checkboxes).filter(cb => cb.checked);
         if (checked.length >= 2) {
-          const tickets = checked.map(cb => cb.dataset.ticket);
+          const tickets = checked.map(cb => cb.dataset.id || cb.dataset.ticket);
           const symbol = checked[0].dataset.symbol;
           const side = checked[0].dataset.side;
           mergeSelectedTrades(tickets, symbol, side);
@@ -9075,12 +9083,13 @@ async function saveCardData(ticket, timeframe, notes, screenshotUrl) {
       body: JSON.stringify({ timeframe, notes, screenshotUrl })
     });
     if (res.ok) {
-      const idx = allTrades.findIndex(t => t.ticket === ticket);
-      if (idx !== -1) {
-        allTrades[idx].timeframe = timeframe;
-        allTrades[idx].notes = notes;
-        allTrades[idx].screenshotUrl = screenshotUrl;
-      }
+      allTrades.forEach(t => {
+        if (t.ticket === ticket) {
+          t.timeframe = timeframe;
+          t.notes = notes;
+          t.screenshotUrl = screenshotUrl;
+        }
+      });
     } else {
       const err = await res.json();
       showToast('Failed to save trade setup: ' + (err.error || 'unknown error'), 'error');

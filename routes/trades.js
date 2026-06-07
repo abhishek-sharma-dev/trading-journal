@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const trades = await dbAll(
-      `SELECT ticket, open_time as open, close_time as close, type, symbol, lots, profit, timeframe, notes, screenshot_url as screenshotUrl 
+      `SELECT id, ticket, open_time as open, close_time as close, type, symbol, lots, profit, timeframe, notes, screenshot_url as screenshotUrl 
        FROM trades 
        WHERE user_id = ? 
        ORDER BY close_time DESC`,

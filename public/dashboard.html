@@ -4495,6 +4495,67 @@ body.sidebar-collapsed #storageSeparator {
     height: 18px !important;
   }
 }
+
+/* Mobile view topbar responsiveness */
+@media (max-width: 600px) {
+  .topbar {
+    padding: 0 1rem !important;
+    height: 56px !important;
+  }
+  .topbar-left .meta {
+    display: none !important;
+  }
+  .topbar-left h1 {
+    font-size: 13px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 110px;
+  }
+  .topbar-right {
+    gap: 6px !important;
+  }
+  .tz-container {
+    height: 30px !important;
+  }
+  .tz-status-left {
+    padding: 0 8px !important;
+  }
+  #sessFXStatus {
+    display: none !important;
+  }
+  .tz-btn {
+    padding: 0 8px 0 6px !important;
+    font-size: 11.5px !important;
+  }
+  .tz-time {
+    font-size: 11px !important;
+  }
+  .tz-flag {
+    font-size: 10px !important;
+  }
+  .tz-dropdown {
+    width: 280px !important;
+    right: -10px !important;
+  }
+  .theme-btn {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 8px !important;
+  }
+  .theme-btn i {
+    font-size: 14px !important;
+  }
+  .profile-icon {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 8px !important;
+    font-size: 11px !important;
+  }
+  .profile-dropdown {
+    width: 270px !important;
+  }
+}
 </style>
 </head>
 <body>

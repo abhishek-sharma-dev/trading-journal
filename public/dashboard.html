@@ -4466,6 +4466,35 @@ body.sidebar-collapsed #storageSeparator {
   font-size: 9px;
   line-height: 1;
 }
+
+/* Mobile adjustments for virtual merge tools */
+@media (max-width: 480px) {
+  .merge-action-banner {
+    width: calc(100% - 32px) !important;
+    padding: 10px 14px !important;
+    gap: 8px !important;
+    bottom: 16px !important;
+    justify-content: space-between !important;
+  }
+  .hide-mobile {
+    display: none !important;
+  }
+  .merge-banner-text {
+    font-size: 12px !important;
+  }
+  .merge-banner-btn {
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+  }
+  .analysis-checkbox-cell {
+    padding: 14px 8px 14px 14px !important;
+  }
+  .analysis-row-checkbox {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -5008,7 +5037,7 @@ body.sidebar-collapsed #storageSeparator {
     <div class="merge-action-banner" id="mergeActionBanner">
       <div class="merge-banner-text"><span id="mergeSelectedCount">0</span> trades selected</div>
       <div style="display: flex; gap: 8px;">
-        <button class="merge-banner-btn" id="btnApplyMerge"><i class="fa-solid fa-link"></i> Merge Selected</button>
+        <button class="merge-banner-btn" id="btnApplyMerge"><i class="fa-solid fa-link"></i> Merge <span class="hide-mobile">Selected</span></button>
         <button class="merge-banner-btn btn-cancel" id="btnCancelMerge">Cancel</button>
       </div>
     </div>

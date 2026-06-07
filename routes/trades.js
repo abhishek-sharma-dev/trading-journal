@@ -127,4 +127,82 @@ router.put('/:ticket', authenticateToken, async (req, res) => {
   }
 });
 
+// Get all virtual groups Endpoint
+router.get('/virtual-groups', authenticateToken, async (req, res) => {
+  try {
+    const rows = await dbAll(
+      `SELECT group_id, symbol, side, tickets, notes 
+       FROM virtual_groups 
+       WHERE user_id = ?`,
+      [req.user.id]
+    );
+
+    const groups = {};
+    rows.forEach(row => {
+      let ticketsArray = [];
+      try {
+        ticketsArray = JSON.parse(row.tickets);
+      } catch (e) {
+        ticketsArray = [];
+      }
+      groups[row.group_id] = {
+        id: row.group_id,
+        symbol: row.symbol,
+        side: row.side,
+        tickets: ticketsArray,
+        notes: row.notes || ''
+      };
+    });
+
+    return res.json(groups);
+  } catch (err) {
+    console.error('Fetch virtual groups error:', err);
+    return res.status(500).json({ error: 'Internal server error fetching virtual groups.' });
+  }
+});
+
+// Sync/Save virtual groups Endpoint
+router.post('/virtual-groups', authenticateToken, async (req, res) => {
+  const groups = req.body;
+
+  if (typeof groups !== 'object') {
+    return res.status(400).json({ error: 'Payload must be a groups object.' });
+  }
+
+  try {
+    await dbRun('BEGIN TRANSACTION');
+
+    // Delete existing groups for this user
+    await dbRun('DELETE FROM virtual_groups WHERE user_id = ?', [req.user.id]);
+
+    const insertSql = `
+      INSERT INTO virtual_groups (user_id, group_id, symbol, side, tickets, notes)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    for (const [groupId, g] of Object.entries(groups)) {
+      if (!g.tickets || !Array.isArray(g.tickets)) continue;
+      await dbRun(insertSql, [
+        req.user.id,
+        groupId,
+        g.symbol || '',
+        g.side || '',
+        JSON.stringify(g.tickets),
+        g.notes || ''
+      ]);
+    }
+
+    await dbRun('COMMIT');
+    return res.json({ message: 'Virtual groups synchronized successfully.' });
+  } catch (err) {
+    console.error('Sync virtual groups error, rolling back:', err);
+    try {
+      await dbRun('ROLLBACK');
+    } catch (rbErr) {
+      console.error('Failed to rollback transaction:', rbErr);
+    }
+    return res.status(500).json({ error: 'Internal server error saving virtual groups.' });
+  }
+});
+
 export default router;

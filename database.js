@@ -103,6 +103,20 @@ export const initDatabase = async () => {
       )
     `);
 
+    // 4. Virtual Groups Table
+    await dbRun(`
+      CREATE TABLE IF NOT EXISTS virtual_groups (
+        user_id INTEGER NOT NULL,
+        group_id TEXT NOT NULL,
+        symbol TEXT NOT NULL,
+        side TEXT NOT NULL,
+        tickets TEXT NOT NULL,
+        notes TEXT DEFAULT '',
+        PRIMARY KEY (user_id, group_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `);
+
     // Add daily rules columns to profiles if they don't exist
     try { await dbRun("ALTER TABLE profiles ADD COLUMN daily_loss_limit REAL DEFAULT 0.0"); } catch(e) {}
     try { await dbRun("ALTER TABLE profiles ADD COLUMN daily_profit_target REAL DEFAULT 0.0"); } catch(e) {}

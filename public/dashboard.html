@@ -5161,6 +5161,13 @@ function getVirtualGroups() {
 function saveVirtualGroups(groups) {
   const key = 'tj_virtual_groups_' + (currentUserId || 'default');
   localStorage.setItem(key, JSON.stringify(groups));
+  
+  // Sync to database
+  fetch('/api/trades/virtual-groups', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(groups)
+  }).catch(err => console.error('Error syncing virtual groups to database:', err));
 }
 
 function mergeSelectedTrades(tickets, symbol, side) {
@@ -8287,6 +8294,18 @@ async function boot() {
       }
     } catch (profileErr) {
       console.warn('Profile fetch failed (non-fatal):', profileErr);
+    }
+
+    // 2.5 Fetch Virtual Groups
+    try {
+      const vgRes = await fetch('/api/trades/virtual-groups');
+      if (vgRes.ok) {
+        const groups = await vgRes.json();
+        const key = 'tj_virtual_groups_' + (currentUserId || 'default');
+        localStorage.setItem(key, JSON.stringify(groups));
+      }
+    } catch (vgErr) {
+      console.warn('Virtual groups fetch failed (non-fatal):', vgErr);
     }
 
     // 3. Fetch Trade Logs

@@ -5282,7 +5282,7 @@ function applyVirtualGrouping(trades) {
 
   // 2. Add all individual (non-grouped) trades
   trades.forEach(t => {
-    if (!groupedTickets.has(String(t.ticket))) {
+    if (!groupedIds.has(String(t.id)) && !groupedIds.has(String(t.ticket))) {
       finalTrades.push(t);
     }
   });

@@ -5284,7 +5284,8 @@ function applyVirtualGrouping(trades) {
 
   // 2. Add all individual (non-grouped) trades
   trades.forEach(t => {
-    if (!groupedIds.has(String(t.id)) && !groupedIds.has(String(t.ticket))) {
+    const stableKey = t.id ? (t.ticket + '_' + (t.close || '').replace(/[^a-zA-Z0-9]/g, '')) : t.ticket;
+    if (!groupedIds.has(stableKey) && !groupedIds.has(String(t.id)) && !groupedIds.has(String(t.ticket))) {
       finalTrades.push(t);
     }
   });

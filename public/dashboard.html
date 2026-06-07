@@ -9668,6 +9668,9 @@ async function fetchUpcomingNews() {
     const res = await fetch('/api/forex-news');
     if (!res.ok) throw new Error();
     const data = await res.json();
+    if (data && (data.error || data.fallback)) {
+      throw new Error(data.error || 'Fallback');
+    }
     
     const now = new Date();
     newsEvents = data

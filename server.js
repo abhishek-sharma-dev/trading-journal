@@ -73,7 +73,7 @@ app.get('/api/forex-news', async (req, res) => {
     if (newsCache) {
       return res.json(newsCache);
     }
-    return res.status(502).json({ error: 'Failed to fetch forex news from source' });
+    return res.json({ error: 'Failed to fetch forex news from source', fallback: true });
   }
 });
 

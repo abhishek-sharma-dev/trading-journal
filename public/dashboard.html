@@ -5214,6 +5214,8 @@ function applyVirtualGrouping(trades) {
   const finalTrades = [];
   const tradeMap = {};
   trades.forEach(t => {
+    const stableKey = t.id ? (t.ticket + '_' + (t.close || '').replace(/[^a-zA-Z0-9]/g, '')) : t.ticket;
+    tradeMap[stableKey] = t;
     tradeMap[String(t.id)] = t;
     if (!tradeMap[String(t.ticket)]) {
       tradeMap[String(t.ticket)] = t;
@@ -5268,11 +5270,11 @@ function applyVirtualGrouping(trades) {
       symbol: firstTrade.symbol,
       lots: totalLots,
       profit: parseFloat(totalProfit.toFixed(2)),
-      timeframe: subTrades.find(st => st.timeframe)?.timeframe || '',
+      timeframe: uniqueSubTrades.find(st => st.timeframe)?.timeframe || '',
       notes: g.notes || '',
-      screenshotUrl: subTrades.find(st => st.screenshotUrl)?.screenshotUrl || '',
+      screenshotUrl: uniqueSubTrades.find(st => st.screenshotUrl)?.screenshotUrl || '',
       isMerged: true,
-      subTrades: subTrades,
+      subTrades: uniqueSubTrades,
       entryPrice: avgEntry.toFixed(decimals),
       exitPrice: avgExit.toFixed(decimals)
     };
@@ -8584,7 +8586,7 @@ function renderAnalysisCards() {
       const prices = getDeterministicPrices(t);
 
       if (t.isMerged) {
-        const rowId = t.id || t.ticket;
+        const rowId = t.id ? (t.ticket + '_' + (t.close || '').replace(/[^a-zA-Z0-9]/g, '')) : t.ticket;
         return `
           <tr class="analysis-table-row" data-id="${rowId}" data-ticket="${t.ticket}">
             <td class="analysis-checkbox-cell" style="padding: 14px 10px 14px 18px !important; width: 30px; text-align: center;"></td>
@@ -8672,7 +8674,7 @@ function renderAnalysisCards() {
         `;
       }
 
-      const rowId = t.id || t.ticket;
+      const rowId = t.id ? (t.ticket + '_' + (t.close || '').replace(/[^a-zA-Z0-9]/g, '')) : t.ticket;
       return `
         <tr class="analysis-table-row" data-id="${rowId}" data-ticket="${t.ticket}">
           <td class="analysis-checkbox-cell" style="padding: 14px 10px 14px 18px !important; width: 30px; text-align: center;">

@@ -35,6 +35,7 @@
   --topbar-glass-border: rgba(226, 224, 218, 0.6);
   --sidebar-logo-glass-bg: rgba(17, 17, 16, 0.85);
   --sidebar-logo-glass-border: rgba(42, 42, 40, 0.6);
+  --topbar-h: 64px;
 }
 
 [data-theme="dark"] {
@@ -546,7 +547,7 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
 .topbar {
   background: var(--card);
   border-bottom: 1px solid var(--border);
-  height: 64px;
+  height: var(--topbar-h);
   padding: 0 1.5rem;
   display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 100;
@@ -3886,7 +3887,7 @@ body.sidebar-collapsed #storageSeparator {
   align-items: center;
   justify-content: space-between;
   position: sticky;
-  top: 64px;
+  top: var(--topbar-h);
   z-index: 99;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   gap: 1.5rem;
@@ -4498,9 +4499,15 @@ body.sidebar-collapsed #storageSeparator {
 
 /* Mobile view topbar responsiveness */
 @media (max-width: 900px) {
+  :root {
+    --topbar-h: 56px;
+  }
   .topbar {
     padding: 0 1rem !important;
     height: 56px !important;
+  }
+  .sessions-bar {
+    padding: 10px 1rem !important;
   }
   .topbar-left .meta {
     display: none !important;

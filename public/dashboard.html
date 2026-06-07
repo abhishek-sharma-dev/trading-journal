@@ -4497,7 +4497,7 @@ body.sidebar-collapsed #storageSeparator {
 }
 
 /* Mobile view topbar responsiveness */
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .topbar {
     padding: 0 1rem !important;
     height: 56px !important;
@@ -4510,7 +4510,7 @@ body.sidebar-collapsed #storageSeparator {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 110px;
+    max-width: 200px;
   }
   .topbar-right {
     gap: 6px !important;
@@ -4554,6 +4554,12 @@ body.sidebar-collapsed #storageSeparator {
   }
   .profile-dropdown {
     width: 270px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .topbar-left h1 {
+    max-width: 110px;
   }
 }
 </style>

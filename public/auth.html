@@ -1033,6 +1033,33 @@ html, body {
 }
 .auth-footer a:hover { text-decoration: underline; }
 
+/* Auth Box Back Button */
+.auth-box-back-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  z-index: 10;
+}
+.auth-box-back-btn:hover {
+  background: var(--bg);
+  border-color: var(--muted);
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
 /* Data check screen */
 .data-check-screen {
   display: none;
@@ -1229,6 +1256,11 @@ html, body {
     </div>
 
     <div class="auth-box">
+      <!-- Back button to go back to login page -->
+      <button type="button" class="auth-box-back-btn" id="authBoxBackBtn" title="Go back to login">
+        <i class="fa-solid fa-arrow-left" style="font-size: 16px;"></i>
+      </button>
+
       <!-- Header -->
       <div class="auth-header">
         <div class="auth-header-title" id="authTitle">Welcome back</div>
@@ -1454,7 +1486,8 @@ html, body {
     dataCheckSub: document.getElementById('dataCheckSub'),
     dataCheckActions: document.getElementById('dataCheckActions'),
     switchToSignup: document.getElementById('switchToSignup'),
-    authFileInput: document.getElementById('authFileInput')
+    authFileInput: document.getElementById('authFileInput'),
+    authBoxBackBtn: document.getElementById('authBoxBackBtn')
   };
 
   let currentTab = 'login';
@@ -1463,6 +1496,9 @@ html, body {
   function switchTab(tab) {
     currentTab = tab;
     hideMsg();
+    if (els.authBoxBackBtn) {
+      els.authBoxBackBtn.style.display = 'none';
+    }
 
     if (tab === 'login') {
       els.tabLogin.classList.add('active');
@@ -1934,6 +1970,9 @@ html, body {
     els.tabLogin.style.display = 'none';
     els.tabSignup.style.display = 'none';
     els.authFooter.style.display = 'none';
+    if (els.authBoxBackBtn) {
+      els.authBoxBackBtn.style.display = 'flex';
+    }
 
     els.authTitle.textContent = 'Almost there';
     els.authSub.textContent = "Let's check your journal database";
@@ -2098,6 +2137,20 @@ html, body {
       }
     });
   });
+
+  /* Back button to go back to login screen */
+  if (els.authBoxBackBtn) {
+    els.authBoxBackBtn.addEventListener('click', async () => {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+      els.tabLogin.style.display = '';
+      els.tabSignup.style.display = '';
+      switchTab('login');
+    });
+  }
 
   /* Auto-login check */
   async function checkAutoLogin() {

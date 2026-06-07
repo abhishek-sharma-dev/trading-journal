@@ -8302,7 +8302,21 @@ async function boot() {
       if (vgRes.ok) {
         const groups = await vgRes.json();
         const key = 'tj_virtual_groups_' + (currentUserId || 'default');
-        localStorage.setItem(key, JSON.stringify(groups));
+        if (groups && Object.keys(groups).length > 0) {
+          localStorage.setItem(key, JSON.stringify(groups));
+        } else {
+          const localVal = localStorage.getItem(key);
+          const localGroups = localVal ? JSON.parse(localVal) : {};
+          if (localGroups && Object.keys(localGroups).length > 0) {
+            fetch('/api/trades/virtual-groups', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(localGroups)
+            }).catch(err => console.error('Error uploading local groups to database:', err));
+          } else {
+            localStorage.setItem(key, JSON.stringify({}));
+          }
+        }
       }
     } catch (vgErr) {
       console.warn('Virtual groups fetch failed (non-fatal):', vgErr);

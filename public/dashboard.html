@@ -6648,44 +6648,21 @@ function buildDashboard(raw) {
   function buildEquityChart(tradeset) {
     const { pts, labels, colors, profits } = buildEquityData(tradeset);
 
-    // Compute custom ticks to show each trading day exactly once, preventing duplicates/gaps
-    const transitionIndices = [];
-    let lastDate = null;
+    // Build a map: for each unique date string, record the LAST trade index with that date
+    const dateLastIndex = {};
     tradeset.forEach((t, idx) => {
-      const dStr = fmtShort(t.closeIST);
-      if (dStr !== lastDate) {
-        transitionIndices.push({ value: idx, label: dStr });
-        lastDate = dStr;
-      }
+      dateLastIndex[fmtShort(t.closeIST)] = idx;
     });
-
-    const minDistance = Math.max(1, Math.ceil(tradeset.length / 10));
-    const customTicks = [];
-    let lastVal = -minDistance;
-    
-    transitionIndices.forEach(tick => {
-      if (tick.value - lastVal >= minDistance) {
-        customTicks.push(tick);
-        lastVal = tick.value;
-      }
-    });
-
-    const lastIdx = tradeset.length - 1;
-    if (lastIdx >= 0 && (lastIdx - lastVal) >= Math.ceil(minDistance / 2)) {
-      const lastDateStr = fmtShort(tradeset[lastIdx].closeIST);
-      const prevTick = customTicks[customTicks.length - 1];
-      if (!prevTick || prevTick.label !== lastDateStr) {
-        customTicks.push({ value: lastIdx, label: lastDateStr });
-      } else {
-        prevTick.value = lastIdx;
-      }
-    }
+    // Collect all unique date boundary indices (sorted by index)
+    const dateBoundaries = Object.values(dateLastIndex).sort((a, b) => a - b);
+    // Build a Set for O(1) lookup in callback
+    const showSet = new Set(dateBoundaries);
 
     if (charts.equity) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
-      charts.equity.$customTicks = customTicks;
+      charts.equity.$showSet = showSet;
       charts.equity.data.labels = labels;
       charts.equity.data.datasets[0].data = pts;
       charts.equity.data.datasets[0].pointBackgroundColor = colors;
@@ -6774,16 +6751,16 @@ function buildDashboard(raw) {
           scales: {
             x: {
               display: true,
-              afterBuildTicks: function(scale) {
-                if (scale.chart.$customTicks) {
-                  scale.ticks = scale.chart.$customTicks.map(t => ({ value: t.value, label: t.label }));
-                }
-              },
               ticks: {
                 color: tc,
                 font: { size: 10 },
                 maxRotation: 0,
-                autoSkip: false
+                autoSkip: false,
+                callback: function(val, index) {
+                  const currentShowSet = this.chart.$showSet || showSet;
+                  if (!currentShowSet.has(index)) return '';
+                  return this.getLabelForValue(val);
+                }
               },
               grid: { display: false },
               border: { display: true, color: 'rgba(128, 128, 128, 0.2)' }
@@ -6811,7 +6788,7 @@ function buildDashboard(raw) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
-      charts.equity.$customTicks = customTicks;
+      charts.equity.$showSet = showSet;
     }
   }
 

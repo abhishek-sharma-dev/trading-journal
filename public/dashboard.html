@@ -6648,21 +6648,10 @@ function buildDashboard(raw) {
   function buildEquityChart(tradeset) {
     const { pts, labels, colors, profits } = buildEquityData(tradeset);
 
-    // Build a map: for each unique date string, record the LAST trade index with that date
-    const dateLastIndex = {};
-    tradeset.forEach((t, idx) => {
-      dateLastIndex[fmtShort(t.closeIST)] = idx;
-    });
-    // Collect all unique date boundary indices (sorted by index)
-    const dateBoundaries = Object.values(dateLastIndex).sort((a, b) => a - b);
-    // Build a Set for O(1) lookup in callback
-    const showSet = new Set(dateBoundaries);
-
     if (charts.equity) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
-      charts.equity.$showSet = showSet;
       charts.equity.data.labels = labels;
       charts.equity.data.datasets[0].data = pts;
       charts.equity.data.datasets[0].pointBackgroundColor = colors;
@@ -6755,11 +6744,17 @@ function buildDashboard(raw) {
                 color: tc,
                 font: { size: 10 },
                 maxRotation: 0,
-                autoSkip: false,
-                callback: function(val, index) {
-                  const currentShowSet = this.chart.$showSet || showSet;
-                  if (!currentShowSet.has(index)) return '';
-                  return this.getLabelForValue(val);
+                autoSkip: true,
+                maxTicksLimit: 12,
+                includeBounds: true,
+                callback: function(val, index, ticks) {
+                  const label = this.getLabelForValue(val);
+                  // Suppress duplicate: if a previous visible tick has the same label, hide this one
+                  for (let i = 0; i < ticks.length && i < index; i++) {
+                    if (ticks[i]._skip) continue;
+                    if (this.getLabelForValue(ticks[i].value) === label) return '';
+                  }
+                  return label;
                 }
               },
               grid: { display: false },
@@ -6788,7 +6783,6 @@ function buildDashboard(raw) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
-      charts.equity.$showSet = showSet;
     }
   }
 

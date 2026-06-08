@@ -6740,7 +6740,24 @@ function buildDashboard(raw) {
           scales: {
             x: {
               display: true,
-              ticks: { color: tc, font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 },
+              ticks: {
+                color: tc,
+                font: { size: 10 },
+                maxRotation: 0,
+                autoSkip: false,
+                callback: function(val, index, ticks) {
+                  const total = ticks.length;
+                  if (total === 0) return '';
+                  if (index === 0 || index === total - 1) {
+                    return this.getLabelForValue(val);
+                  }
+                  const interval = Math.ceil(total / 10);
+                  if (index % interval === 0 && (total - 1 - index) >= (interval / 2)) {
+                    return this.getLabelForValue(val);
+                  }
+                  return '';
+                }
+              },
               grid: { display: false },
               border: { display: true, color: 'rgba(128, 128, 128, 0.2)' }
             },

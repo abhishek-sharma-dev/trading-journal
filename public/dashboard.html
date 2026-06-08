@@ -6648,10 +6648,34 @@ function buildDashboard(raw) {
   function buildEquityChart(tradeset) {
     const { pts, labels, colors, profits } = buildEquityData(tradeset);
 
+    // Find the FIRST trade index for each unique date
+    const dateFirstIndex = {};
+    tradeset.forEach((t, idx) => {
+      const dStr = fmtShort(t.closeIST);
+      if (!(dStr in dateFirstIndex)) {
+        dateFirstIndex[dStr] = idx;
+      }
+    });
+    // Sorted list of first-trade indices (one per day)
+    const dayIndices = Object.values(dateFirstIndex).sort((a, b) => a - b);
+
+    // If too many days, thin to ~12 evenly-spaced labels
+    let showIndices = dayIndices;
+    const maxLabels = 12;
+    if (dayIndices.length > maxLabels) {
+      showIndices = [];
+      const step = (dayIndices.length - 1) / (maxLabels - 1);
+      for (let i = 0; i < maxLabels; i++) {
+        showIndices.push(dayIndices[Math.round(i * step)]);
+      }
+    }
+    const showSet = new Set(showIndices);
+
     if (charts.equity) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
+      charts.equity.$showSet = showSet;
       charts.equity.data.labels = labels;
       charts.equity.data.datasets[0].data = pts;
       charts.equity.data.datasets[0].pointBackgroundColor = colors;
@@ -6744,17 +6768,11 @@ function buildDashboard(raw) {
                 color: tc,
                 font: { size: 10 },
                 maxRotation: 0,
-                autoSkip: true,
-                maxTicksLimit: 12,
-                includeBounds: true,
-                callback: function(val, index, ticks) {
-                  const label = this.getLabelForValue(val);
-                  // Suppress duplicate: if a previous visible tick has the same label, hide this one
-                  for (let i = 0; i < ticks.length && i < index; i++) {
-                    if (ticks[i]._skip) continue;
-                    if (this.getLabelForValue(ticks[i].value) === label) return '';
-                  }
-                  return label;
+                autoSkip: false,
+                callback: function(val, index) {
+                  const s = this.chart.$showSet || showSet;
+                  if (!s.has(index)) return '';
+                  return this.getLabelForValue(val);
                 }
               },
               grid: { display: false },
@@ -6783,6 +6801,7 @@ function buildDashboard(raw) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
+      charts.equity.$showSet = showSet;
     }
   }
 
@@ -6798,10 +6817,12 @@ function buildDashboard(raw) {
         const range = btn.dataset.range;
         let filtered = allTrades;
         if (range === 'week') {
-          const cutoff = new Date(allTrades[allTrades.length-1].closeIST.getTime() - 7*24*3600*1000);
+          const now = new Date();
+          const cutoff = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - 6*24*3600*1000);
           filtered = allTrades.filter(t => t.closeIST >= cutoff);
         } else if (range === 'month') {
-          const cutoff = new Date(allTrades[allTrades.length-1].closeIST.getTime() - 30*24*3600*1000);
+          const now = new Date();
+          const cutoff = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - 29*24*3600*1000);
           filtered = allTrades.filter(t => t.closeIST >= cutoff);
         }
         if (!filtered.length) filtered = allTrades;

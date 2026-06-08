@@ -6648,10 +6648,44 @@ function buildDashboard(raw) {
   function buildEquityChart(tradeset) {
     const { pts, labels, colors, profits } = buildEquityData(tradeset);
 
+    // Compute custom ticks to show each trading day exactly once, preventing duplicates/gaps
+    const transitionIndices = [];
+    let lastDate = null;
+    tradeset.forEach((t, idx) => {
+      const dStr = fmtShort(t.closeIST);
+      if (dStr !== lastDate) {
+        transitionIndices.push({ value: idx, label: dStr });
+        lastDate = dStr;
+      }
+    });
+
+    const minDistance = Math.max(1, Math.ceil(tradeset.length / 10));
+    const customTicks = [];
+    let lastVal = -minDistance;
+    
+    transitionIndices.forEach(tick => {
+      if (tick.value - lastVal >= minDistance) {
+        customTicks.push(tick);
+        lastVal = tick.value;
+      }
+    });
+
+    const lastIdx = tradeset.length - 1;
+    if (lastIdx >= 0 && (lastIdx - lastVal) >= Math.ceil(minDistance / 2)) {
+      const lastDateStr = fmtShort(tradeset[lastIdx].closeIST);
+      const prevTick = customTicks[customTicks.length - 1];
+      if (!prevTick || prevTick.label !== lastDateStr) {
+        customTicks.push({ value: lastIdx, label: lastDateStr });
+      } else {
+        prevTick.value = lastIdx;
+      }
+    }
+
     if (charts.equity) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
+      charts.equity.$customTicks = customTicks;
       charts.equity.data.labels = labels;
       charts.equity.data.datasets[0].data = pts;
       charts.equity.data.datasets[0].pointBackgroundColor = colors;
@@ -6740,22 +6774,16 @@ function buildDashboard(raw) {
           scales: {
             x: {
               display: true,
+              afterBuildTicks: function(scale) {
+                if (scale.chart.$customTicks) {
+                  scale.ticks = scale.chart.$customTicks.map(t => ({ value: t.value, label: t.label }));
+                }
+              },
               ticks: {
                 color: tc,
                 font: { size: 10 },
                 maxRotation: 0,
-                autoSkip: true,
-                maxTicksLimit: 10,
-                includeBounds: true,
-                callback: function(val, index, ticks) {
-                  const label = this.getLabelForValue(val);
-                  for (let i = 0; i < index; i++) {
-                    if (this.getLabelForValue(ticks[i].value) === label) {
-                      return '';
-                    }
-                  }
-                  return label;
-                }
+                autoSkip: false
               },
               grid: { display: false },
               border: { display: true, color: 'rgba(128, 128, 128, 0.2)' }
@@ -6771,6 +6799,7 @@ function buildDashboard(raw) {
       charts.equity.$tradeset = tradeset;
       charts.equity.$profits = profits;
       charts.equity.$colors = colors;
+      charts.equity.$customTicks = customTicks;
     }
   }
 
@@ -7151,6 +7180,40 @@ function buildDashboard(raw) {
       ddLabels.push(fmtShort(t.closeIST));
     });
 
+    const ddTransitionIndices = [{ value: 0, label: 'Start' }];
+    let ddLastDate = null;
+    tradeset.forEach((t, idx) => {
+      const dStr = fmtShort(t.closeIST);
+      if (dStr !== ddLastDate) {
+        ddTransitionIndices.push({ value: idx + 1, label: dStr });
+        ddLastDate = dStr;
+      }
+    });
+
+    const ddMinDistance = Math.max(1, Math.ceil((tradeset.length + 1) / 10));
+    const ddCustomTicks = [];
+    let ddLastVal = -ddMinDistance;
+    
+    ddTransitionIndices.forEach(tick => {
+      if (tick.value - ddLastVal >= ddMinDistance) {
+        ddCustomTicks.push(tick);
+        ddLastVal = tick.value;
+      }
+    });
+
+    const ddLastIdx = tradeset.length;
+    if (ddLastIdx >= 0 && (ddLastIdx - ddLastVal) >= Math.ceil(ddMinDistance / 2)) {
+      const ddLastDateStr = tradeset.length > 0 ? fmtShort(tradeset[tradeset.length - 1].closeIST) : '';
+      if (ddLastDateStr) {
+        const prevTick = ddCustomTicks[ddCustomTicks.length - 1];
+        if (!prevTick || prevTick.label !== ddLastDateStr) {
+          ddCustomTicks.push({ value: ddLastIdx, label: ddLastDateStr });
+        } else {
+          prevTick.value = ddLastIdx;
+        }
+      }
+    }
+
     // Scorecard calculations
     const totalWins = tradeset.filter(t => t.profit > 0);
     const totalLosses = tradeset.filter(t => t.profit <= 0);
@@ -7446,23 +7509,17 @@ function buildDashboard(raw) {
           },
           scales: {
             x: {
+              afterBuildTicks: function(scale) {
+                if (scale.chart.$customTicks) {
+                  scale.ticks = scale.chart.$customTicks.map(t => ({ value: t.value, label: t.label }));
+                }
+              },
               ticks: {
                 color: tc,
                 font: { size: 9 },
                 maxRotation: 45,
                 minRotation: 45,
-                autoSkip: true,
-                maxTicksLimit: 10,
-                includeBounds: true,
-                callback: function(val, index, ticks) {
-                  const label = this.getLabelForValue(val);
-                  for (let i = 0; i < index; i++) {
-                    if (this.getLabelForValue(ticks[i].value) === label) {
-                      return '';
-                    }
-                  }
-                  return label;
-                }
+                autoSkip: false
               },
               grid: { display: false },
               border: { display: true, color: 'rgba(128,128,128,0.2)' }
@@ -7471,6 +7528,7 @@ function buildDashboard(raw) {
           }
         }
       });
+      charts.drawdown.$customTicks = ddCustomTicks;
     }
 
     // Setup format button click listeners

@@ -721,7 +721,7 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  width: 320px;
+  width: min(320px, 90vw);
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -850,6 +850,45 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
 .mcard .lbl { font-size: 10px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
 .mcard .val { font-size: 15px; font-weight: 600; line-height: 1.1; font-family: 'IBM Plex Mono', monospace; }
 .mcard .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* ── Metrics Show More / Less toggle ── */
+.metrics-toggle-wrap {
+  display: flex;
+  justify-content: center;
+  margin: -2px 0 0.75rem;
+}
+.metrics-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.metrics-toggle-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(26,143,104,0.06);
+  box-shadow: 0 0 12px rgba(26,143,104,0.15);
+}
+[data-theme="dark"] .metrics-toggle-btn:hover {
+  background: rgba(52,212,138,0.07);
+  box-shadow: 0 0 14px rgba(52,212,138,0.18);
+}
+.metrics-toggle-btn span:first-child {
+  font-size: 10px;
+  transition: transform 0.25s ease;
+  display: inline-block;
+}
 .win { color: var(--green); } .loss { color: var(--red); }
 
 /* ── Charts ── */
@@ -1258,6 +1297,12 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
 }
 
 .cal-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+@media (max-width: 500px) {
+  .cal-grid { grid-template-columns: repeat(7, 1fr) !important; }
+  .cal-grid-header { grid-template-columns: repeat(7, 1fr) !important; }
+  .cal-cell.weekly-cell { display: none !important; }
+  .cal-grid-header .week-col { display: none !important; }
+}
 
 .cal-cell.weekly-cell {
   background: rgba(26,143,104,0.03);
@@ -1500,7 +1545,7 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
    AI MENTOR CHAT STYLES
    ═══════════════════════════════════ */
 #page-aimentor {
-  height: calc(100vh - 116px);
+  height: calc(100vh - var(--topbar-h) - 52px);
   padding: 1rem 1.5rem 1.5rem;
   box-sizing: border-box;
   display: none;
@@ -2985,7 +3030,7 @@ body.sidebar-collapsed #storageSeparator {
   font-size: 13.5px;
   font-family: inherit;
   outline: none;
-  min-width: 320px;
+  min-width: min(320px, 100%);
   transition: all 0.2s ease;
   cursor: pointer;
   -webkit-appearance: none;
@@ -4569,6 +4614,541 @@ body.sidebar-collapsed #storageSeparator {
     max-width: 110px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FULL DASHBOARD MOBILE RESPONSIVENESS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Shared page container tightening at 900px ── */
+@media (max-width: 900px) {
+  .page {
+    padding: 0.75rem 1rem 2rem !important;
+  }
+
+  /* ── Upload zone ── */
+  .upload-zone {
+    max-width: 100% !important;
+    padding: 2rem 1rem !important;
+  }
+  #uploadScreen {
+    padding: 1rem !important;
+  }
+
+  /* ── Metric/KPI cards ── */
+  .metrics {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* ── Chart boxes ── */
+  .chart-box {
+    padding: 0.85rem !important;
+  }
+
+  /* ── Equity curve chart controls header ── */
+  .chart-header-row,
+  .equity-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .equity-range-btns {
+    flex-wrap: wrap !important;
+  }
+
+  /* ── Page section labels ── */
+  .sec {
+    font-size: 9.5px !important;
+    margin: 1rem 0 0.5rem !important;
+  }
+
+  /* ── Two-column chart grid → single column ── */
+  .two-col {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* ── Dashboard home: filter bar ── */
+  .filter-bar {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .filter-bar select {
+    font-size: 11px !important;
+    flex: 1 1 auto !important;
+    min-width: 100px !important;
+  }
+
+  /* ── Day group header ── */
+  .day-group-header {
+    padding: 8px 12px !important;
+  }
+  .day-group-meta {
+    font-size: 10px !important;
+  }
+
+  /* ── Trade Analysis Page: page header ── */
+  .analysis-page-header {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    padding-bottom: 1rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .analysis-page-header .aph-icon {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+    border-radius: 12px !important;
+  }
+  .analysis-page-header .aph-text h2 {
+    font-size: 17px !important;
+  }
+
+  /* ── Analysis scorecard top strip ── */
+  .analysis-metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* ── Analysis control bar: wrap on mobile ── */
+  .analysis-control-bar {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+  .analysis-control-bar .search-wrapper {
+    min-width: 0 !important;
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  .analysis-control-bar .toggle-group,
+  .analysis-control-bar .filter-group {
+    flex: 1 !important;
+    justify-content: center !important;
+  }
+  .analysis-control-bar .toggle-btn,
+  .analysis-control-bar .filter-btn {
+    font-size: 11px !important;
+    padding: 5px 8px !important;
+  }
+  .analysis-control-bar .dropdown-wrapper select {
+    font-size: 11.5px !important;
+    padding: 7px 28px 7px 10px !important;
+  }
+
+  /* ── Analysis table: allow horizontal scroll, reduce cell padding ── */
+  .analysis-table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .analysis-table th {
+    padding: 10px 12px !important;
+    font-size: 9.5px !important;
+  }
+  .analysis-table td {
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+  }
+
+  /* ── Analysis rules row ── */
+  .analysis-rules-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Trade selector dropdown in analysis ── */
+  .an-trade-selector-bar {
+    padding: 1rem !important;
+    gap: 0.75rem !important;
+  }
+  .an-trade-selector-bar select {
+    min-width: 0 !important;
+    width: 100% !important;
+    font-size: 12.5px !important;
+  }
+  .an-trade-selector-bar h3 {
+    font-size: 13px !important;
+  }
+
+  /* ── Trade analysis detail panels ── */
+  .an-trade-body.visible {
+    grid-template-columns: 1fr !important;
+  }
+  .an-trade-left {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 1rem !important;
+  }
+  .an-trade-right {
+    padding: 1rem !important;
+  }
+  .an-trade-footer {
+    padding: 1rem !important;
+  }
+
+  /* ── Daily performance table ── */
+  .an-daily-perf-table-wrap {
+    max-height: 300px !important;
+  }
+
+  /* ── Analysis generic cards ── */
+  .an-card {
+    padding: 1.1rem !important;
+  }
+  .an-card-header h3 {
+    font-size: 13px !important;
+  }
+
+  /* ── Targets / stat strip ── */
+  .an-stat-strip {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.65rem !important;
+  }
+
+  /* ── AI Mentor chat ── */
+  #page-aimentor {
+    height: calc(100vh - var(--topbar-h) - 60px) !important;
+    padding: 0.75rem !important;
+  }
+  .chat-messages {
+    padding: 1rem !important;
+    gap: 14px !important;
+  }
+  .chat-message {
+    max-width: 95% !important;
+  }
+  .chat-input-area {
+    padding: 0.85rem 1rem !important;
+  }
+
+  /* ── Insights page charts ── */
+  #page-insights .two-col {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    margin-top: 0.75rem !important;
+  }
+
+  /* ── Calendar: year summary ── */
+  .year-summary {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  .year-sum-card .val {
+    font-size: 15px !important;
+  }
+
+  /* ── Monthly bar chart ── */
+  .monthly-bars-wrap {
+    padding: 0.85rem !important;
+  }
+  .monthly-bars {
+    height: 80px !important;
+  }
+  .month-bar-label {
+    font-size: 9px !important;
+  }
+  .month-bar-val {
+    display: none !important;
+  }
+
+  /* ── Calendar summary strip ── */
+  .cal-summary {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  .cal-sum-card .val {
+    font-size: 14px !important;
+  }
+
+  /* ── Sessions bar: collapse to single column ── */
+  .sessions-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    min-height: auto !important;
+    gap: 6px !important;
+  }
+  .sessions-bar-left {
+    max-width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    border-bottom: 1px dashed var(--border) !important;
+    padding-bottom: 8px !important;
+  }
+  .sessions-bar-right {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .sessions-panel-divider {
+    display: none !important;
+  }
+}
+
+/* ── Show More button on mobile and tablet (≤900px); show all cards on desktop screens (≥901px) ── */
+@media (min-width: 901px) {
+  #metricsToggleWrap {
+    display: none !important;
+  }
+  #metrics .mcard-extra {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── Small mobile (≤600px): further tighten ── */
+@media (max-width: 600px) {
+  /* ── Metric cards: single column ── */
+  .metrics {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .mcard .val {
+    font-size: 13px !important;
+  }
+  .mcard .lbl {
+    font-size: 9px !important;
+  }
+
+  /* ── Chart fixed-height canvases ── */
+  #page-insights .two-col > div [style*="height:220px"],
+  #page-insights .two-col > div [style*="height: 220px"] {
+    height: 180px !important;
+  }
+
+  /* ── Analysis table: hide less-important cols via inline .hide-mobile ── */
+  .analysis-table th.col-notes,
+  .analysis-table td.col-notes,
+  .analysis-table th.col-screenshot,
+  .analysis-table td.col-screenshot {
+    display: none !important;
+  }
+
+  /* ── Analysis scorecard ── */
+  .analysis-metric-card {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+  .analysis-metric-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 13px !important;
+  }
+  .analysis-metric-value {
+    font-size: 13px !important;
+  }
+
+  /* ── Trade stat strip ── */
+  .trades-stat-strip {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── An-stat strip ── */
+  .an-stat-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Upload zone ── */
+  .upload-zone {
+    padding: 1.5rem 0.75rem !important;
+  }
+  .upload-zone .icon {
+    font-size: 2rem !important;
+  }
+  .upload-btn-lbl {
+    padding: 8px 18px !important;
+    font-size: 12px !important;
+  }
+
+  /* ── Cal grid cells: shrink height ── */
+  .cal-cell {
+    min-height: 50px !important;
+    padding: 3px 4px !important;
+  }
+  .cal-cell .day-pnl {
+    font-size: 10px !important;
+  }
+  .cal-cell .day-num {
+    font-size: 10px !important;
+  }
+
+  /* ── Cal header title ── */
+  .cal-title, .year-title {
+    font-size: 14px !important;
+  }
+
+  /* ── Year months grid: 2 cols ── */
+  .months-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  /* ── Analysis selector bar ── */
+  .an-trade-selector-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* ── Merge banner ── */
+  .merge-action-banner {
+    width: calc(100% - 24px) !important;
+    padding: 10px 12px !important;
+    gap: 10px !important;
+    bottom: 12px !important;
+    flex-wrap: wrap !important;
+  }
+  .merge-banner-text {
+    font-size: 12px !important;
+    flex: 1 !important;
+  }
+  .merge-banner-btn {
+    padding: 7px 10px !important;
+    font-size: 11px !important;
+  }
+
+  /* ── AI chat ── */
+  .chat-header {
+    padding: 0.9rem 1rem !important;
+    gap: 8px !important;
+  }
+  .chat-header-title {
+    font-size: 13px !important;
+  }
+  .chat-header-icon {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 15px !important;
+  }
+  .chat-bubble {
+    font-size: 13px !important;
+    padding: 10px 13px !important;
+  }
+
+  /* ── Sessions bar items ── */
+  .session-item {
+    padding: 3px 7px !important;
+    font-size: 10px !important;
+  }
+  .session-name {
+    font-size: 10px !important;
+  }
+  .session-time {
+    font-size: 10px !important;
+  }
+
+  /* ── Sessions bar right panel ── */
+  .sessions-pulse-block {
+    gap: 5px !important;
+  }
+  .sessions-pulse-label {
+    font-size: 9px !important;
+    display: none !important;
+  }
+  .sessions-pulse-value {
+    font-size: 10px !important;
+  }
+
+  /* ── Forex news widget in sessions bar ── */
+  .news-ticker-value {
+    font-size: 10px !important;
+  }
+
+  /* ── Page section heading ── */
+  .sec {
+    letter-spacing: 0.04em !important;
+  }
+}
+
+/* ── Very small screens (≤400px): last-mile fix ── */
+@media (max-width: 400px) {
+  /* ── Metric cards: go single column ── */
+  .metrics {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Year summary and cal-summary: 2-col stays, but val shrinks ── */
+  .year-sum-card .val,
+  .cal-sum-card .val {
+    font-size: 13px !important;
+  }
+
+  /* ── Analysis metrics: single column ── */
+  .analysis-metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Trades stat strip ── */
+  .trades-stat-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Month bar values hidden ── */
+  .month-bar-label {
+    display: none !important;
+  }
+
+  /* ── Cal header: ensure month/year selects don't overflow ── */
+  .cal-month-select,
+  .cal-year-select {
+    min-width: 0 !important;
+    font-size: 12px !important;
+    padding: 5px 24px 5px 10px !important;
+  }
+
+  /* ── An-stat card icon ── */
+  .an-stat-card-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+  }
+  .an-stat-card-val {
+    font-size: 15px !important;
+  }
+
+  /* ── Page padding ── */
+  .page {
+    padding: 0.5rem 0.75rem 2rem !important;
+  }
+}
+
+/* ── Chart canvas heights — responsive overrides at 640px ── */
+@media (max-width: 640px) {
+  /* Insights page charts */
+  #sessionChart, #hourlyChart, #dayOfWeekChart, #durationChart {
+    max-height: 180px !important;
+  }
+  #drawdownChart {
+    max-height: 190px !important;
+  }
+  /* Dashboard home charts */
+  #dailyChart {
+    max-height: 160px !important;
+  }
+  #symbolChart, #winChart {
+    max-height: 150px !important;
+  }
+
+  /* ── Equity chart controls header ── */
+  .chart-box > div[style*="display:flex"][style*="justify-content:space-between"],
+  .chart-box > div[style*="display: flex"][style*="justify-content: space-between"] {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  /* ── AI mentor page height fix for stacked sessions bar ── */
+  #page-aimentor {
+    height: calc(100vh - var(--topbar-h) - 110px) !important;
+  }
+}
+
+/* ── Chat table overflow for wide AI responses ── */
+.chat-bubble table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
 </style>
 </head>
 <body>
@@ -4905,6 +5485,12 @@ body.sidebar-collapsed #storageSeparator {
   <!-- ── Dashboard Page ── -->
   <div class="page" id="page-overview">
     <div class="metrics" id="metrics"></div>
+    <div class="metrics-toggle-wrap" id="metricsToggleWrap" style="display:none;">
+      <button class="metrics-toggle-btn" id="metricsToggleBtn" onclick="toggleMetrics()">
+        <span id="metricsToggleIcon">▼</span>
+        <span id="metricsToggleLabel">Show More</span>
+      </button>
+    </div>
 
     <div class="chart-box" id="equityChartBox">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem;">
@@ -5890,6 +6476,35 @@ function renderMiniMonths(containerEl, yearMonthDataMap, selectedYM, onMonthClic
   });
 }
 
+/* ── Metrics Show More / Show Less ── */
+let _metricsExpanded = false;
+function toggleMetrics() {
+  _metricsExpanded = !_metricsExpanded;
+  const extras = document.querySelectorAll('#metrics .mcard-extra');
+  const lbl = document.getElementById('metricsToggleLabel');
+  const ico = document.getElementById('metricsToggleIcon');
+  extras.forEach(el => {
+    if (_metricsExpanded) {
+      el.style.display = '';
+      // tiny fade-in
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(6px)';
+      requestAnimationFrame(() => {
+        el.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      });
+    } else {
+      el.style.transition = '';
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.display = 'none';
+    }
+  });
+  if (lbl) lbl.textContent = _metricsExpanded ? 'Show Less' : 'Show More';
+  if (ico) ico.textContent = _metricsExpanded ? '▲' : '▼';
+}
+
 function buildYearMonthDataMap(trades, year) {
   const map = {};
   for (let m = 0; m < 12; m++) {
@@ -5934,7 +6549,7 @@ function buildDashboard(raw) {
     const firstD = trades[0].closeIST, lastD = trades[trades.length-1].closeIST;
     const sMeta = document.getElementById('sidebarMeta');
     if (sMeta) sMeta.textContent = fmtShort(firstD)+' – '+fmtShort(lastD);
-    document.getElementById('topMeta').textContent = trades.length+' trades · '+fmtShort(firstD)+' – '+fmtShort(lastD)+' ('+getTzLabel()+')';
+    document.getElementById('topMeta').textContent = raw.length+' trades ('+trades.length+' positions) · '+fmtShort(firstD)+' – '+fmtShort(lastD)+' ('+getTzLabel()+')';
   } else {
     const sMeta = document.getElementById('sidebarMeta');
     if (sMeta) sMeta.textContent = '—';
@@ -5962,7 +6577,7 @@ function buildDashboard(raw) {
   const metrics = [
    {lbl:'Net P&L',    val:(totalPnl>=0?'+':'')+'$'+totalPnl.toFixed(2), sub:trades.length+' closed trades',      c:totalPnl>=0?'win':'loss'},
    {lbl:'Win Rate',   val:wr+'%',        sub:wins.length+'W / '+losses.length+'L',                                c:''},
-   {lbl:'Trades',     val:trades.length, sub:trades.length ? fmtShort(trades[0].closeIST)+' – '+fmtShort(trades[trades.length-1].closeIST) : '—', c:''},
+   {lbl:'Trades',     val:trades.length,    sub:raw.length ? raw.length+' raw executions' : '—', c:''},
    {lbl:'Avg Win',    val:'+$'+avgW,     sub:'per winning trade',                                                 c:'win'},
    {lbl:'Avg Loss',   val:'$'+avgL,      sub:'per losing trade',                                                  c:'loss'},
    {lbl:'Risk Reward', val:'1:'+riskRewardRatio, sub:'avg win / avg loss', c: parseFloat(riskRewardRatio)>=1.5?'win':(parseFloat(riskRewardRatio)>=1?'':'loss')},
@@ -5977,11 +6592,29 @@ function buildDashboard(raw) {
     });
   }
 
-  metrics.forEach(m=>{
-    const d=document.createElement('div'); d.className='mcard';
-    d.innerHTML='<div class="lbl">'+m.lbl+'</div><div class="val '+m.c+'">'+m.val+'</div><div class="sub">'+m.sub+'</div>';
+  metrics.forEach((m, idx) => {
+    const d = document.createElement('div');
+    d.className = 'mcard';
+    if (idx >= 4) {
+      d.className += ' mcard-extra';
+      d.style.display = 'none';
+    }
+    d.innerHTML = '<div class="lbl">' + m.lbl + '</div><div class="val ' + m.c + '">' + m.val + '</div><div class="sub">' + m.sub + '</div>';
     mEl.appendChild(d);
   });
+
+  // Show/hide toggle button based on card count
+  const toggleWrap = document.getElementById('metricsToggleWrap');
+  const totalCards = mEl.querySelectorAll('.mcard').length;
+  if (toggleWrap) {
+    toggleWrap.style.display = totalCards > 4 ? 'flex' : 'none';
+  }
+  // Reset toggle state when data reloads
+  _metricsExpanded = false;
+  const lbl = document.getElementById('metricsToggleLabel');
+  const ico = document.getElementById('metricsToggleIcon');
+  if (lbl) lbl.textContent = 'Show More';
+  if (ico) ico.textContent = '▼';
 
   destroyCharts();
   if (trades.length === 0) return;
@@ -6893,7 +7526,8 @@ function renderTradeList(trades) {
   
 
 
-  document.getElementById('filterCount').textContent=trades.length+' trade'+(trades.length!==1?'s':'')+' shown';
+  const rawCount = trades.reduce((sum, t) => sum + (t.isMerged && t.subTrades ? t.subTrades.length : 1), 0);
+  document.getElementById('filterCount').textContent=totalTrades+' trade'+(totalTrades!==1?'s':'')+' ('+rawCount+' raw executions) shown';
   if(!trades.length){ el.innerHTML='<p style="font-size:13px;color:var(--muted);padding:1rem 0;">No trades match filters.</p>'; return; }
 
   const dayGroups = {};
@@ -7372,14 +8006,22 @@ async function handleFile(file) {
   const reader=new FileReader();
   reader.onload = async (e) => {
     try {
-      // Clear previous CSV data
+      // Clear local backups first to prevent conflict/incorrect restorations
+      const tKey = 'tj_trades_backup_' + (currentUserId || 'default');
+      const pKey = 'tj_profile_backup_' + (currentUserId || 'default');
+      const vgKey = 'tj_virtual_groups_' + (currentUserId || 'default');
+      localStorage.removeItem(tKey);
+      localStorage.removeItem(pKey);
+      localStorage.removeItem(vgKey);
+
+      // Clear previous CSV data from server
       const deleteRes = await fetch('/api/trades', { method: 'DELETE' });
       if (!deleteRes.ok) {
         showError('Failed to clear previous trade history before upload.');
         return;
       }
 
-      // Reset Starting Capital & Daily Rules
+      // Reset Starting Capital & Daily Rules on server
       await fetch('/api/profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -7425,6 +8067,8 @@ async function handleFile(file) {
         const reloadRes = await fetch('/api/trades');
         if (reloadRes.ok) {
           const freshTrades = await reloadRes.json();
+          // Backup current trades to localStorage
+          localStorage.setItem(tKey, JSON.stringify(freshTrades));
           launchDashboard(freshTrades);
           updateStorageBadge({ count: freshTrades.length });
           showToast(`Successfully imported ${result.count} new trades!`);
@@ -7466,17 +8110,13 @@ async function resetDashboardToEmpty() {
   document.getElementById('topMeta').textContent = 'Upload your Exness CSV to begin';
   document.getElementById('topbarTitle').textContent = 'Trading Dashboard';
 
-  document.getElementById('metrics').innerHTML = [
-    {lbl:'Net P&L',    val:'$0.00',  sub:'no trades'},
-    {lbl:'Win Rate',   val:'0%',     sub:'0W / 0L'},
-    {lbl:'Trades',     val:'0',      sub:'—'},
-    {lbl:'Avg Win',    val:'+$0.00', sub:'per winning trade'},
-    {lbl:'Avg Loss',   val:'$0.00',  sub:'per losing trade'},
-    {lbl:'Risk Reward', val:'1:0.00', sub:'avg win / avg loss'},
-    {lbl:'Best Trade', val:'+$0.00', sub:'single trade'},
-    {lbl:'Worst Trade',val:'$0.00',  sub:'single trade'},
-    {lbl:'Profit Factor', val:'0.00', sub:''},
-  ].map(m=>`<div class="mcard"><div class="lbl">${m.lbl}</div><div class="val">${m.val}</div><div class="sub">${m.sub}</div></div>`).join('');
+  const _zm = [{lbl:'Net P&L',val:'$0.00',sub:'no trades'},{lbl:'Win Rate',val:'0%',sub:'0W / 0L'},{lbl:'Trades',val:'0',sub:'—'},{lbl:'Avg Win',val:'+$0.00',sub:'per winning trade'},{lbl:'Avg Loss',val:'$0.00',sub:'per losing trade'},{lbl:'Risk Reward',val:'1:0.00',sub:'avg win / avg loss'},{lbl:'Best Trade',val:'+$0.00',sub:'single trade'},{lbl:'Worst Trade',val:'$0.00',sub:'single trade'},{lbl:'Profit Factor',val:'0.00',sub:''}];
+  document.getElementById('metrics').innerHTML = _zm.map((m,i)=>`<div class="mcard${i>=4?' mcard-extra':''}"${i>=4?' style="display:none;"':''}><div class="lbl">${m.lbl}</div><div class="val">${m.val}</div><div class="sub">${m.sub}</div></div>`).join('');
+  const _ztw=document.getElementById('metricsToggleWrap'); if(_ztw)_ztw.style.display='flex';
+  _metricsExpanded=false;
+  const _zl=document.getElementById('metricsToggleLabel'); if(_zl)_zl.textContent='Show More';
+  const _zi=document.getElementById('metricsToggleIcon'); if(_zi)_zi.textContent='▼';
+
 
   dailyDayMap = {};
   dailyDayKeys = [];
@@ -7524,6 +8164,13 @@ document.getElementById('deleteDataBtn').addEventListener('click', async () => {
   try {
     const res = await fetch('/api/trades', { method: 'DELETE' });
     if (res.ok) {
+      const tKey = 'tj_trades_backup_' + (currentUserId || 'default');
+      const pKey = 'tj_profile_backup_' + (currentUserId || 'default');
+      const vgKey = 'tj_virtual_groups_' + (currentUserId || 'default');
+      localStorage.removeItem(tKey);
+      localStorage.removeItem(pKey);
+      localStorage.removeItem(vgKey);
+
       resetDashboardToEmpty();
       showToast('All trades wiped from database', 'error');
     } else {
@@ -7839,6 +8486,16 @@ async function saveProfile() {
       profileData.broker = broker;
       profileData.style = style;
       updateProfileUI();
+      
+      const pKey = 'tj_profile_backup_' + (currentUserId || 'default');
+      localStorage.setItem(pKey, JSON.stringify({
+        name,
+        email,
+        broker,
+        style,
+        startingCapital
+      }));
+
       closeProfile();
       showToast('Profile updated in SQLite');
     } else {
@@ -7926,14 +8583,15 @@ function updateProfileStats() {
     return;
   }
 
-  const totalTrades = allTrades.length;
+  const totalRawTrades = _rawTrades ? _rawTrades.length : 0;
+  const totalVirtualTrades = allTrades.length;
   const wins = allTrades.filter(t => t.profit > 0).length;
-  const wr = totalTrades ? ((wins / totalTrades) * 100).toFixed(1) : '0.0';
+  const wr = totalVirtualTrades ? ((wins / totalVirtualTrades) * 100).toFixed(1) : '0.0';
   const totalPnl = allTrades.reduce((s, t) => s + t.profit, 0);
   const activeDaysSet = new Set(allTrades.map(t => isoDay(t.closeIST)));
   const activeDays = activeDaysSet.size;
 
-  profileStatTrades.textContent = totalTrades;
+  profileStatTrades.textContent = totalVirtualTrades;
   profileStatWR.textContent = wr + '%';
   profileStatPnL.textContent = (totalPnl >= 0 ? '+' : '') + '$' + totalPnl.toFixed(2);
   profileStatPnL.className = 'profile-stat-val ' + (totalPnl >= 0 ? 'win' : 'loss');
@@ -8311,6 +8969,7 @@ async function boot() {
   
   // Handle Stripe upgrade notifications
   if (params.get('payment') === 'success') {
+    localStorage.setItem('premium_activated', 'true');
     showToast('🎉 Upgrade Complete! Lifetime Premium Membership activated.', 'success');
     window.history.replaceState({}, document.title, window.location.pathname);
   } else if (params.get('payment') === 'cancel') {
@@ -8350,20 +9009,80 @@ async function boot() {
     
     isPremiumUser = user.isPremium;
     if (isPremiumUser) {
+      localStorage.setItem('premium_activated', 'true');
       upgradeBtn.style.display = 'none';
       profileTier.textContent = '👑 Premium Account';
       profileIcon.classList.add('premium-user');
     } else {
-      upgradeBtn.style.display = 'flex';
-      profileTier.textContent = 'Free Account';
-      profileIcon.classList.remove('premium-user');
+      // Check if user previously upgraded in this browser
+      if (localStorage.getItem('premium_activated') === 'true') {
+        try {
+          const restoreRes = await fetch('/api/payment/restore-premium', { method: 'POST' });
+          if (restoreRes.ok) {
+            isPremiumUser = true;
+            upgradeBtn.style.display = 'none';
+            profileTier.textContent = '👑 Premium Account';
+            profileIcon.classList.add('premium-user');
+            console.log('Premium status restored from localStorage successfully.');
+          } else {
+            upgradeBtn.style.display = 'flex';
+            profileTier.textContent = 'Free Account';
+            profileIcon.classList.remove('premium-user');
+          }
+        } catch (restoreErr) {
+          console.error('Failed to restore premium:', restoreErr);
+          upgradeBtn.style.display = 'flex';
+          profileTier.textContent = 'Free Account';
+          profileIcon.classList.remove('premium-user');
+        }
+      } else {
+        upgradeBtn.style.display = 'flex';
+        profileTier.textContent = 'Free Account';
+        profileIcon.classList.remove('premium-user');
+      }
     }
 
     // 2. Fetch Profile Info
     try {
       const profRes = await fetch('/api/profile');
       if (profRes.ok) {
-        const prof = await profRes.json();
+        let prof = await profRes.json();
+        const pKey = 'tj_profile_backup_' + (currentUserId || 'default');
+        
+        // If profile on server is empty/default (new user after DB reset), try to restore
+        const isServerProfileDefault = !prof.broker && !prof.style && prof.startingCapital === 0 && prof.dailyLossLimit === 0 && prof.dailyProfitTarget === 0;
+        if (isServerProfileDefault) {
+          const localProfVal = localStorage.getItem(pKey);
+          if (localProfVal) {
+            try {
+              const localProf = JSON.parse(localProfVal);
+              console.log('Restoring profile from localStorage...', localProf);
+              const restoreProfRes = await fetch('/api/profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(localProf)
+              });
+              if (restoreProfRes.ok) {
+                prof = await restoreProfRes.json();
+              }
+            } catch (e) {
+              console.error('Failed to parse local profile:', e);
+            }
+          }
+        } else {
+          // Backup current server profile to localStorage
+          localStorage.setItem(pKey, JSON.stringify({
+            name: prof.name,
+            email: prof.email,
+            broker: prof.broker,
+            style: prof.style,
+            startingCapital: prof.startingCapital,
+            dailyLossLimit: prof.dailyLossLimit,
+            dailyProfitTarget: prof.dailyProfitTarget,
+            dailyLossType: prof.dailyLossType
+          }));
+        }
+
         profileData = {
           fullName: prof.name || user.name || '',
           email: prof.email || user.email || '',
@@ -8430,11 +9149,65 @@ async function boot() {
       const tradesRes = await fetch('/api/trades');
       if (tradesRes.ok) {
         const trades = await tradesRes.json();
+        const tKey = 'tj_trades_backup_' + (currentUserId || 'default');
         if (trades && trades.length > 0) {
+          localStorage.setItem(tKey, JSON.stringify(trades));
           launchDashboard(trades);
           updateStorageBadge({ count: trades.length });
         } else {
-          resetDashboardToEmpty();
+          // Server has 0 trades. Try to restore from localStorage backup.
+          const localVal = localStorage.getItem(tKey);
+          let localTrades = [];
+          try {
+            localTrades = localVal ? JSON.parse(localVal) : [];
+          } catch (e) {
+            console.error('Failed to parse local trades:', e);
+          }
+          if (localTrades && localTrades.length > 0) {
+            console.log('Restoring trades from localStorage...', localTrades.length);
+            showToast('Restoring your trade history from browser cache...', 'info');
+            
+            // Format trades for backend upload
+            const rawForStorage = localTrades.map(t => ({
+              ticket: t.ticket,
+              open: t.open,
+              close: t.close,
+              type: t.type,
+              symbol: t.symbol,
+              lots: t.lots,
+              profit: t.profit,
+              timeframe: t.timeframe || '',
+              notes: t.notes || '',
+              screenshotUrl: t.screenshotUrl || t.screenshot_url || ''
+            }));
+            
+            try {
+              const uploadRes = await fetch('/api/trades/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ trades: rawForStorage })
+              });
+              if (uploadRes.ok) {
+                const reloadRes = await fetch('/api/trades');
+                if (reloadRes.ok) {
+                  const freshTrades = await reloadRes.json();
+                  launchDashboard(freshTrades);
+                  updateStorageBadge({ count: freshTrades.length });
+                  showToast('Trade history successfully restored!', 'success');
+                } else {
+                  launchDashboard(localTrades);
+                  updateStorageBadge({ count: localTrades.length });
+                }
+              } else {
+                resetDashboardToEmpty();
+              }
+            } catch (err) {
+              console.error('Failed to upload cached trades:', err);
+              resetDashboardToEmpty();
+            }
+          } else {
+            resetDashboardToEmpty();
+          }
         }
       } else {
         resetDashboardToEmpty();
@@ -8609,9 +9382,10 @@ function renderAnalysisCards() {
 
 
   // Update total count
+  const totalTrades = filtered.length;
   const countEl = document.getElementById('analysisTableCount');
   if (countEl) {
-    countEl.textContent = `${filtered.length} trade${filtered.length !== 1 ? 's' : ''}`;
+    countEl.textContent = `${totalTrades} trade${totalTrades !== 1 ? 's' : ''}`;
   }
 
   // Calculate metrics for filtered trades
@@ -8672,7 +9446,7 @@ function renderAnalysisCards() {
         </div>
         <div class="analysis-metric-content">
           <div class="analysis-metric-label">Total Trades</div>
-          <div class="analysis-metric-value">${filtered.length}</div>
+          <div class="analysis-metric-value">${totalTrades}</div>
         </div>
       </div>
     `;
@@ -9229,6 +10003,8 @@ async function saveCardData(ticket, timeframe, notes, screenshotUrl) {
           t.screenshotUrl = screenshotUrl;
         }
       });
+      const tKey = 'tj_trades_backup_' + (currentUserId || 'default');
+      localStorage.setItem(tKey, JSON.stringify(allTrades));
     } else {
       const err = await res.json();
       showToast('Failed to save trade setup: ' + (err.error || 'unknown error'), 'error');

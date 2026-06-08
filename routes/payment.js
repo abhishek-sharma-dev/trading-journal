@@ -228,4 +228,16 @@ router.get('/status', authenticateToken, async (req, res) => {
   }
 });
 
+// 6. Restore premium status endpoint
+router.post('/restore-premium', authenticateToken, async (req, res) => {
+  try {
+    await dbRun('UPDATE users SET is_premium = 1 WHERE id = ?', [req.user.id]);
+    console.log(`User ID ${req.user.id} premium status restored.`);
+    return res.json({ success: true, message: 'Premium status restored.' });
+  } catch (err) {
+    console.error('Error restoring premium:', err);
+    return res.status(500).json({ error: 'Failed to restore premium.' });
+  }
+});
+
 export default router;

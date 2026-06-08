@@ -39,15 +39,15 @@ router.post('/upload', authenticateToken, async (req, res) => {
     await dbRun('BEGIN TRANSACTION');
 
     const insertSql = `
-      INSERT OR IGNORE INTO trades (user_id, ticket, open_time, close_time, type, symbol, lots, profit)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT OR IGNORE INTO trades (user_id, ticket, open_time, close_time, type, symbol, lots, profit, timeframe, notes, screenshot_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(user_id, ticket, close_time) DO NOTHING
     `;
 
     let insertedCount = 0;
 
     for (const trade of trades) {
-      const { ticket, open, close, type, symbol, lots, profit } = trade;
+      const { ticket, open, close, type, symbol, lots, profit, timeframe, notes, screenshotUrl, screenshot_url } = trade;
 
       // Validate required fields
       if (!open || !close || !type || !symbol || profit === undefined) {
@@ -62,7 +62,10 @@ router.post('/upload', authenticateToken, async (req, res) => {
         type.toLowerCase(),
         symbol.toUpperCase(),
         parseFloat(lots) || 0.01,
-        parseFloat(profit) || 0.0
+        parseFloat(profit) || 0.0,
+        timeframe || '',
+        notes || '',
+        screenshotUrl || screenshot_url || ''
       ]);
 
       // If the row was actually inserted (changes > 0), increment count

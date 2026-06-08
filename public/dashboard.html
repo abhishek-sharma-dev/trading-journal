@@ -8069,6 +8069,22 @@ async function handleFile(file) {
           const freshTrades = await reloadRes.json();
           // Backup current trades to localStorage
           localStorage.setItem(tKey, JSON.stringify(freshTrades));
+          
+          // Reload virtual groups from database and sync to local storage
+          try {
+            const vgRes = await fetch('/api/trades/virtual-groups');
+            if (vgRes.ok) {
+              const groups = await vgRes.json();
+              if (groups && Object.keys(groups).length > 0) {
+                localStorage.setItem(vgKey, JSON.stringify(groups));
+              } else {
+                localStorage.setItem(vgKey, JSON.stringify({}));
+              }
+            }
+          } catch (vgErr) {
+            console.error('Error reloading virtual groups post-upload:', vgErr);
+          }
+
           launchDashboard(freshTrades);
           updateStorageBadge({ count: freshTrades.length });
           showToast(`Successfully imported ${result.count} new trades!`);

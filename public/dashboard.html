@@ -6746,7 +6746,16 @@ function buildDashboard(raw) {
                 maxRotation: 0,
                 autoSkip: true,
                 maxTicksLimit: 10,
-                includeBounds: true
+                includeBounds: true,
+                callback: function(val, index, ticks) {
+                  const label = this.getLabelForValue(val);
+                  for (let i = 0; i < index; i++) {
+                    if (this.getLabelForValue(ticks[i].value) === label) {
+                      return '';
+                    }
+                  }
+                  return label;
+                }
               },
               grid: { display: false },
               border: { display: true, color: 'rgba(128, 128, 128, 0.2)' }
@@ -7436,7 +7445,28 @@ function buildDashboard(raw) {
             }
           },
           scales: {
-            x: { ticks: { color: tc, font: { size: 9 }, maxRotation: 45, minRotation: 45 }, grid: { display: false }, border: { display: true, color: 'rgba(128,128,128,0.2)' } },
+            x: {
+              ticks: {
+                color: tc,
+                font: { size: 9 },
+                maxRotation: 45,
+                minRotation: 45,
+                autoSkip: true,
+                maxTicksLimit: 10,
+                includeBounds: true,
+                callback: function(val, index, ticks) {
+                  const label = this.getLabelForValue(val);
+                  for (let i = 0; i < index; i++) {
+                    if (this.getLabelForValue(ticks[i].value) === label) {
+                      return '';
+                    }
+                  }
+                  return label;
+                }
+              },
+              grid: { display: false },
+              border: { display: true, color: 'rgba(128,128,128,0.2)' }
+            },
             y: { ticks: { color: tc, callback: v => (v > 0 ? '+' : v < 0 ? '-' : '') + Math.abs(v) + '$' }, grid: { color: gc }, border: { display: true, color: 'rgba(128,128,128,0.2)' } }
           }
         }
